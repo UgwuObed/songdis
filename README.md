@@ -1,66 +1,170 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Laravel Project Setup with RabbitMQ for SMS Sending
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This guide will walk you through setting up the Laravel project, configuring the environment for RabbitMQ, and how to authenticate and interact with the API endpoint for sending SMS messages.
 
-## About Laravel
+Setting Up the Laravel Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Clone the repository and install dependencies
+Make sure you have Laravel and Composer installed. After cloning the project, navigate to the project directory and run:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Step 2: Set up environment variables
+Copy the `.env.example` file to `.env`:
 
-## Learning Laravel
+cp .env.example .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Now, configure your environment variables in the `.env` file. You can use the following as a guide:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:OlflmWhalmft2q3R+wGR7txDCawd9FGonL73eOVD8Qs=
+APP_DEBUG=true
+APP_URL=http://localhost
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sms
+DB_USERNAME=root
+DB_PASSWORD=Ikechukwu@1
 
-## Laravel Sponsors
+QUEUE_CONNECTION=rabbitmq
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+RABBITMQ_HOST=127.0.0.1
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_QUEUE=contact_queue
+```
 
-### Premium Partners
+Step 3: Generate application key
+Run the following command to generate an application key:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
 
-## Contributing
+php artisan key:generate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Step 4: Run migrations and seed the database
+To set up your database, run the migrations and seed the contacts table with sample data:
 
-## Code of Conduct
+php artisan migrate --seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+2. Configuring RabbitMQ
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+RabbitMQ is used to queue the contact messages that will be sent. Make sure RabbitMQ is installed and running on your system.
 
-## License
+Step 1: Install RabbitMQ Server
+Follow the [RabbitMQ installation guide](https://www.rabbitmq.com/download.html) to install RabbitMQ for your OS.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Step 2: Start RabbitMQ
+Make sure RabbitMQ is running. You can start the service using the following commands:
+
+- On Windows:
+
+rabbitmq-service start
+
+- On Linux:
+
+sudo systemctl start rabbitmq-server
+
+You can confirm it's running by checking the RabbitMQ status:
+
+rabbitmqctl status
+
+Step 3: Install Laravel Queue RabbitMQ Driver
+Run the following command to install the RabbitMQ driver for Laravel:
+
+composer require vladimir-yuldashev/laravel-queue-rabbitmq
+
+
+3. Queue Configuration
+
+Make sure you have set the queue driver to RabbitMQ in your `.env` file:
+
+QUEUE_CONNECTION=rabbitmq
+
+In your `config/queue.php` file, ensure the `rabbitmq` connection is configured:
+
+'rabbitmq' => [
+    'driver' => 'rabbitmq',
+    'host' => env('RABBITMQ_HOST', '127.0.0.1'),
+    'port' => env('RABBITMQ_PORT', 5672),
+    'user' => env('RABBITMQ_USER', 'guest'),
+    'password' => env('RABBITMQ_PASSWORD', 'guest'),
+    'queue' => env('RABBITMQ_QUEUE', 'contact_queue'),
+],
+
+
+
+4. Authenticating with the API
+
+The project uses **Laravel Sanctum** for API authentication. To interact with the protected endpoints, follow these steps:
+
+Step 1: Register a new user
+Make a POST request to the `/api/register` endpoint:
+
+
+POST http://localhost/api/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "password": "password123"
+}
+
+
+The response will include a token, which you need for authentication.
+
+Step 2: Log in (if needed)
+You can log in using the `/api/login` endpoint:
+
+POST http://localhost/api/login
+Content-Type: application/json
+
+{
+  "email": "johndoe@example.com",
+  "password": "password123"
+}
+
+
+You'll receive a token in the response.
+
+Step 3: Use the token to authenticate
+For any protected route (like `/api/send-sms`), include the token in the `Authorization` header:
+
+
+Authorization: Bearer {your-token-here}
+
+
+5. Calling the `/send-sms` Endpoint
+
+Once you are authenticated, you can send the contacts to the RabbitMQ queue by calling the `/api/send-sms` endpoint:
+
+
+POST http://localhost/api/send-sms
+Authorization: Bearer {your-token-here}
+
+
+Expected Response:
+
+{
+  "message": "Contacts sent to queue successfully!"
+}
+
+
+6. Running the Queue Worker
+
+To process the jobs in the queue, run the following command in your terminal:
+
+php artisan queue:work
+
+
+This will listen to the RabbitMQ queue and process the contacts as jobs are dispatched.
+
+  
+- Debugging: If any issues arise, check the Laravel logs in `storage/logs/laravel.log` and RabbitMQ logs to diagnose problems.
+
+
+This concludes the setup and API usage guide for the Laravel project with RabbitMQ integration for SMS sending.
+
