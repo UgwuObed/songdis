@@ -25,6 +25,4 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::post('/send-sms', [SMSController::class, 'sendSms']);
-
 });

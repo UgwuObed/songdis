@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
+
 class AuthController extends Controller
 {
     public function login(Request $request)
@@ -48,6 +49,7 @@ class AuthController extends Controller
         'password.required' => 'A password is required.',
         'password.min' => 'Your password must be at least 8 characters long.',
         'password.confirmed' => 'Password confirmation does not match.',
+        'account_type.required' => 'Please select an account type.',
     ];
 
     $validator = Validator::make($request->all(), [
@@ -55,6 +57,7 @@ class AuthController extends Controller
         'last_name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
+        'account_type' => 'required|string|in:artist,label-paid,label-free',
     ], $messages);
 
     if ($validator->fails()) {
@@ -66,9 +69,11 @@ class AuthController extends Controller
         'last_name' => $request->last_name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
+        'account_type' => $request->account_type,
     ]);
 
     $token = $user->createToken('api-token')->plainTextToken;
+
 
     return response()->json([
         'message' => 'Registration successful.',
