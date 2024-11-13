@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*', 'http://localhost:3000', 'songdis.com'],
+    'allowed_origins' => ['*', 'http://localhost:3000', 'https://songdis.com'],
 
     'allowed_origins_patterns' => [],
 

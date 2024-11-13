@@ -61,9 +61,11 @@ class AuthController extends Controller
     ], $messages);
 
     if ($validator->fails()) {
+        \Log::error('Validation Errors: ', $validator->errors()->toArray());
         return response()->json(['errors' => $validator->errors()], 422);
     }
-
+    
+    
     $user = User::create([
         'first_name' => $request->first_name,
         'last_name' => $request->last_name,
@@ -71,6 +73,7 @@ class AuthController extends Controller
         'password' => Hash::make($request->password),
         'account_type' => $request->account_type,
     ]);
+
 
     $token = $user->createToken('api-token')->plainTextToken;
 
