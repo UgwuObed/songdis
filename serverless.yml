@@ -21,6 +21,7 @@ provider:
       - subnet-0f21719e395236cd4
       - subnet-079d2d5a0bdf6a538
       - subnet-05f8313e980955a0a
+
   environment:
     APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
     APP_DEBUG: true
