@@ -4,23 +4,6 @@ provider:
   name: aws
   region: us-east-1
   runtime: provided.al2
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - rds:DescribeDBInstances
-        - rds:Connect
-        - ec2:CreateNetworkInterface
-        - ec2:DescribeNetworkInterfaces
-        - ec2:DeleteNetworkInterface
-      Resource: '*'
-  vpc:
-    securityGroupIds:
-      - sg-04da6ef1e62d4450e 
-    subnetIds:
-      - subnet-0da92b1b121e09352 
-      - subnet-0f21719e395236cd4
-      - subnet-079d2d5a0bdf6a538
-      - subnet-05f8313e980955a0a
 
   environment:
     APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
