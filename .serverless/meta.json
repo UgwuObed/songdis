@@ -34,8 +34,51 @@
               "name": "aws",
               "region": "us-east-1",
               "runtime": "provided.al2",
+              "iamRoleStatements": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "rds:DescribeDBInstances",
+                    "rds:Connect",
+                    "ec2:CreateNetworkInterface",
+                    "ec2:DescribeNetworkInterfaces",
+                    "ec2:DeleteNetworkInterface"
+                  ],
+                  "Resource": "*"
+                }
+              ],
+              "vpc": {
+                "securityGroupIds": [
+                  "sg-04da6ef1e62d4450e"
+                ],
+                "subnetIds": [
+                  "subnet-0da92b1b121e09352",
+                  "subnet-0f21719e395236cd4",
+                  "subnet-079d2d5a0bdf6a538",
+                  "subnet-05f8313e980955a0a"
+                ]
+              },
+              "environment": {
+                "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
+                "APP_DEBUG": "true",
+                "APP_URL": "https://aqriowefzfncmjlzea5ajxgn740dnxul.lambda-url.us-east-1.on.aws",
+                "MAIL_DRIVER": "ses",
+                "MAIL_MAILER": "ses",
+                "SESSION_DRIVER": "file",
+                "SESSION_DOMAIN": "http://localhost:3000,https://songdis.com",
+                "SESSION_SECURE_COOKIE": "true",
+                "SESSION_LIFETIME": "120",
+                "SANCTUM_STATEFUL_DOMAINS": "http://localhost:3000,https://songdis.com",
+                "DB_CONNECTION": "mysql",
+                "DB_HOST": "${env.DB_HOST}",
+                "DB_PORT": "${env.DB_PORT}",
+                "DB_DATABASE": "${env.DB_DATABASE}",
+                "DB_USERNAME": "${env.DB_USERNAME}",
+                "DB_PASSWORD": "<REDACTED>"
+              },
               "stage": "dev",
-              "versionFunctions": true
+              "versionFunctions": true,
+              "deploymentMethod": "direct"
             },
             "functions": {
               "web": {
@@ -47,22 +90,27 @@
                 ],
                 "events": [
                   {
-                    "httpApi": "*"
+                    "httpApi": "*",
+                    "resolvedMethod": "ANY"
                   }
-                ]
+                ],
+                "name": "laravel-app-dev-web"
               }
             },
             "plugins": [
-              "serverless-bref"
-            ]
+              "./vendor/bref/bref"
+            ],
+            "hooks": {
+              "after:deploy:finalize": [
+                "php artisan migrate --force"
+              ]
+            }
           },
           "configFileDirPath": "C:\\laragon\\www\\songdis",
           "config": {
             "type": "sls"
           },
-          "options": {
-            "debug": "*"
-          },
+          "options": {},
           "stage": "dev",
           "dashboard": null,
           "logger": {
@@ -84,8 +132,51 @@
         "name": "aws",
         "region": "us-east-1",
         "runtime": "provided.al2",
+        "iamRoleStatements": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "rds:DescribeDBInstances",
+              "rds:Connect",
+              "ec2:CreateNetworkInterface",
+              "ec2:DescribeNetworkInterfaces",
+              "ec2:DeleteNetworkInterface"
+            ],
+            "Resource": "*"
+          }
+        ],
+        "vpc": {
+          "securityGroupIds": [
+            "sg-04da6ef1e62d4450e"
+          ],
+          "subnetIds": [
+            "subnet-0da92b1b121e09352",
+            "subnet-0f21719e395236cd4",
+            "subnet-079d2d5a0bdf6a538",
+            "subnet-05f8313e980955a0a"
+          ]
+        },
+        "environment": {
+          "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
+          "APP_DEBUG": "true",
+          "APP_URL": "https://aqriowefzfncmjlzea5ajxgn740dnxul.lambda-url.us-east-1.on.aws",
+          "MAIL_DRIVER": "ses",
+          "MAIL_MAILER": "ses",
+          "SESSION_DRIVER": "file",
+          "SESSION_DOMAIN": "http://localhost:3000,https://songdis.com",
+          "SESSION_SECURE_COOKIE": "true",
+          "SESSION_LIFETIME": "120",
+          "SANCTUM_STATEFUL_DOMAINS": "http://localhost:3000,https://songdis.com",
+          "DB_CONNECTION": "mysql",
+          "DB_HOST": "${env.DB_HOST}",
+          "DB_PORT": "${env.DB_PORT}",
+          "DB_DATABASE": "${env.DB_DATABASE}",
+          "DB_USERNAME": "${env.DB_USERNAME}",
+          "DB_PASSWORD": "<REDACTED>"
+        },
         "stage": "dev",
-        "versionFunctions": true
+        "versionFunctions": true,
+        "deploymentMethod": "direct"
       },
       "functions": {
         "web": {
@@ -97,29 +188,30 @@
           ],
           "events": [
             {
-              "httpApi": "*"
+              "httpApi": "*",
+              "resolvedMethod": "ANY"
             }
-          ]
+          ],
+          "name": "laravel-app-dev-web"
         }
       },
       "plugins": [
-        "serverless-bref"
-      ]
+        "./vendor/bref/bref"
+      ],
+      "hooks": {
+        "after:deploy:finalize": [
+          "php artisan migrate --force"
+        ]
+      }
     },
-    "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 28\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - serverless-bref\r\n",
+    "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n  iamRoleStatements:\r\n    - Effect: Allow\r\n      Action:\r\n        - rds:DescribeDBInstances\r\n        - rds:Connect\r\n        - ec2:CreateNetworkInterface\r\n        - ec2:DescribeNetworkInterfaces\r\n        - ec2:DeleteNetworkInterface\r\n      Resource: '*'\r\n  vpc:\r\n    securityGroupIds:\r\n      - sg-04da6ef1e62d4450e \r\n    subnetIds:\r\n      - subnet-0da92b1b121e09352 \r\n      - subnet-0f21719e395236cd4\r\n      - subnet-079d2d5a0bdf6a538\r\n      - subnet-05f8313e980955a0a\r\n  environment:\r\n    APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=\r\n    APP_DEBUG: true\r\n    APP_URL: https://aqriowefzfncmjlzea5ajxgn740dnxul.lambda-url.us-east-1.on.aws\r\n\r\n    # Mail configuration\r\n    MAIL_DRIVER: ses\r\n    MAIL_MAILER: ses\r\n\r\n    # Session and CORS settings\r\n    SESSION_DRIVER: file\r\n    SESSION_DOMAIN: http://localhost:3000,https://songdis.com\r\n    SESSION_SECURE_COOKIE: true\r\n    SESSION_LIFETIME: 120\r\n    SANCTUM_STATEFUL_DOMAINS: http://localhost:3000,https://songdis.com\r\n\r\n    # Database configuration\r\n    DB_CONNECTION: mysql\r\n    DB_HOST: ${env.DB_HOST}\r\n    DB_PORT: ${env.DB_PORT}\r\n    DB_DATABASE: ${env.DB_DATABASE}\r\n    DB_USERNAME: ${env.DB_USERNAME}\r\n    DB_PASSWORD: ${env.DB_PASSWORD}\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 28\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - ./vendor/bref/bref\r\n\r\nhooks:\r\n  after:deploy:finalize:\r\n    - php artisan migrate --force\r\n",
     "command": [
-      "deploy"
+      "info"
     ],
-    "options": {
-      "debug": "*"
-    },
-    "error": {
-      "message": "Serverless plugin \"serverless-bref\" not found. Make sure it's installed and listed in the \"plugins\" section of your serverless config file. Use the --debug flag to learn more.",
-      "stack": "ServerlessError2: Serverless plugin \"serverless-bref\" not found. Make sure it's installed and listed in the \"plugins\" section of your serverless config file. Use the --debug flag to learn more.\n    at PluginManager.resolveServicePlugins (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:925:2669)\n    at async PluginManager.loadAllPlugins (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:925:1293)\n    at async Serverless.init (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:932:10049)\n    at async runFramework (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:980:1387)\n    at async route (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:14784)\n    at async Object.run2 [as run] (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:15182)\n    at async run3 (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:16442)",
-      "code": "PLUGIN_NOT_FOUND"
-    },
+    "options": {},
+    "error": null,
     "params": {},
-    "machineId": "d4e1dd783dee9adef56b8f6f05e2dddc",
+    "machineId": "b7e0d8a74bcd4b07c0bcda39b11fd9e3",
     "stage": "dev",
     "accessKeyV2": "<REDACTED>",
     "accessKeyV1": "<REDACTED>",
@@ -143,43 +235,36 @@
     "serviceProviderAwsAccountId": "905418309715",
     "projectType": "traditional",
     "versionSf": "4.4.9",
-    "serviceUniqueId": "arn:aws:cloudformation:us-east-1:905418309715:stack/vapor-network-1731221220/9c77a220-9f2f-11ef-85c5-0affde745fe7",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:905418309715:stack/vapor-network-1731221220/9c77a220-9f2f-11ef-85c5-0affde745fe7",
-    "serviceProviderAwsCfStackCreated": "2024-11-10T06:47:10.972Z",
+    "serviceProviderAwsCfStackName": "laravel-app-dev",
+    "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
+    "serviceProviderAwsCfStackCreated": "2024-11-15T11:02:50.639Z",
     "serviceProviderAwsCfStackUpdated": null,
     "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
-        "OutputKey": "PrivateSubnetFour",
-        "OutputValue": "subnet-05f8313e980955a0a"
+        "OutputKey": "WebLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:905418309715:function:laravel-app-dev-web:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
       },
       {
-        "OutputKey": "PublicSubnetOne",
-        "OutputValue": "subnet-06d80a620f0191513"
+        "OutputKey": "HttpApiId",
+        "OutputValue": "ctp1wzzdtf",
+        "Description": "Id of the HTTP API",
+        "ExportName": "sls-laravel-app-dev-HttpApiId"
       },
       {
-        "OutputKey": "VpcId",
-        "OutputValue": "vpc-0651ea64821c2ffa0"
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-2440d25b-b907",
+        "ExportName": "sls-laravel-app-dev-ServerlessDeploymentBucketName"
       },
       {
-        "OutputKey": "PrivateSubnetTwo",
-        "OutputValue": "subnet-0f21719e395236cd4"
-      },
-      {
-        "OutputKey": "PublicSubnetTwo",
-        "OutputValue": "subnet-0db6d7e54882a8c94"
-      },
-      {
-        "OutputKey": "PrivateSubnetThree",
-        "OutputValue": "subnet-079d2d5a0bdf6a538"
-      },
-      {
-        "OutputKey": "DefaultSecurityGroupId",
-        "OutputValue": "sg-04da6ef1e62d4450e"
-      },
-      {
-        "OutputKey": "PrivateSubnetOne",
-        "OutputValue": "subnet-0da92b1b121e09352"
+        "OutputKey": "HttpApiUrl",
+        "OutputValue": "https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com",
+        "Description": "URL of the HTTP API",
+        "ExportName": "sls-laravel-app-dev-HttpApiUrl"
       }
     ]
   }

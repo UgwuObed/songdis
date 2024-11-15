@@ -4,6 +4,46 @@ provider:
   name: aws
   region: us-east-1
   runtime: provided.al2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds:DescribeDBInstances
+        - rds:Connect
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: '*'
+  vpc:
+    securityGroupIds:
+      - sg-04da6ef1e62d4450e 
+    subnetIds:
+      - subnet-0da92b1b121e09352 
+      - subnet-0f21719e395236cd4
+      - subnet-079d2d5a0bdf6a538
+      - subnet-05f8313e980955a0a
+  environment:
+    APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
+    APP_DEBUG: true
+    APP_URL: https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com
+
+    # Mail configuration
+    MAIL_DRIVER: ses
+    MAIL_MAILER: ses
+
+    # Session and CORS settings
+    SESSION_DRIVER: file
+    SESSION_DOMAIN: http://localhost:3000,https://songdis.com
+    SESSION_SECURE_COOKIE: true
+    SESSION_LIFETIME: 120
+    SANCTUM_STATEFUL_DOMAINS: http://localhost:3000,https://songdis.com
+
+    # Database configuration
+    DB_CONNECTION: mysql
+    DB_HOST: ${env.DB_HOST}
+    DB_PORT: ${env.DB_PORT}
+    DB_DATABASE: ${env.DB_DATABASE}
+    DB_USERNAME: ${env.DB_USERNAME}
+    DB_PASSWORD: ${env.DB_PASSWORD}
 
 functions:
   web:
@@ -17,3 +57,7 @@ functions:
 
 plugins:
   - ./vendor/bref/bref
+
+hooks:
+  after:deploy:finalize:
+    - php artisan migrate --force
