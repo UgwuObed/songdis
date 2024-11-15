@@ -16,4 +16,4 @@ functions:
       - httpApi: '*'
 
 plugins:
-  - serverless-bref
+  - ./vendor/bref/bref

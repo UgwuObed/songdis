@@ -1,0 +1,186 @@
+{
+  "unknown": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.9",
+    "isWithinCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "command": [
+      "login"
+    ],
+    "options": {},
+    "error": null,
+    "machineId": "b7e0d8a74bcd4b07c0bcda39b11fd9e3",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  },
+  "C:\\laragon\\www\\songdis": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.9",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "sls": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "service": "laravel-app",
+            "provider": {
+              "name": "aws",
+              "region": "us-east-1",
+              "runtime": "provided.al2",
+              "stage": "dev",
+              "versionFunctions": true
+            },
+            "functions": {
+              "web": {
+                "handler": "public/index.php",
+                "timeout": 28,
+                "memorySize": 1024,
+                "layers": [
+                  "arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10"
+                ],
+                "events": [
+                  {
+                    "httpApi": "*"
+                  }
+                ]
+              }
+            },
+            "plugins": [
+              "serverless-bref"
+            ]
+          },
+          "configFileDirPath": "C:\\laragon\\www\\songdis",
+          "config": {
+            "type": "sls"
+          },
+          "options": {
+            "debug": "*"
+          },
+          "stage": "dev",
+          "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:sls",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "C:\\laragon\\www\\songdis",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "laravel-app",
+      "provider": {
+        "name": "aws",
+        "region": "us-east-1",
+        "runtime": "provided.al2",
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "functions": {
+        "web": {
+          "handler": "public/index.php",
+          "timeout": 28,
+          "memorySize": 1024,
+          "layers": [
+            "arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10"
+          ],
+          "events": [
+            {
+              "httpApi": "*"
+            }
+          ]
+        }
+      },
+      "plugins": [
+        "serverless-bref"
+      ]
+    },
+    "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 28\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - serverless-bref\r\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "debug": "*"
+    },
+    "error": {
+      "message": "Serverless plugin \"serverless-bref\" not found. Make sure it's installed and listed in the \"plugins\" section of your serverless config file. Use the --debug flag to learn more.",
+      "stack": "ServerlessError2: Serverless plugin \"serverless-bref\" not found. Make sure it's installed and listed in the \"plugins\" section of your serverless config file. Use the --debug flag to learn more.\n    at PluginManager.resolveServicePlugins (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:925:2669)\n    at async PluginManager.loadAllPlugins (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:925:1293)\n    at async Serverless.init (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:932:10049)\n    at async runFramework (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:980:1387)\n    at async route (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:14784)\n    at async Object.run2 [as run] (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:15182)\n    at async run3 (file:///C:/Users/obedu/.serverless/releases/4.4.9/package/dist/sf-core.js:1010:16442)",
+      "code": "PLUGIN_NOT_FOUND"
+    },
+    "params": {},
+    "machineId": "d4e1dd783dee9adef56b8f6f05e2dddc",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "7e89074e-e961-46e3-9f19-b9aeeb47929a",
+    "orgName": "zikor",
+    "userId": "hfC6qXq6ghnZ95h7jH",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "zikor",
+    "subscription": null,
+    "userEmail": "vjazzyvictor@gmail.com",
+    "serviceProviderAwsRegion": "us-east-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "905418309715",
+    "projectType": "traditional",
+    "versionSf": "4.4.9",
+    "serviceUniqueId": "arn:aws:cloudformation:us-east-1:905418309715:stack/vapor-network-1731221220/9c77a220-9f2f-11ef-85c5-0affde745fe7",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:905418309715:stack/vapor-network-1731221220/9c77a220-9f2f-11ef-85c5-0affde745fe7",
+    "serviceProviderAwsCfStackCreated": "2024-11-10T06:47:10.972Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "PrivateSubnetFour",
+        "OutputValue": "subnet-05f8313e980955a0a"
+      },
+      {
+        "OutputKey": "PublicSubnetOne",
+        "OutputValue": "subnet-06d80a620f0191513"
+      },
+      {
+        "OutputKey": "VpcId",
+        "OutputValue": "vpc-0651ea64821c2ffa0"
+      },
+      {
+        "OutputKey": "PrivateSubnetTwo",
+        "OutputValue": "subnet-0f21719e395236cd4"
+      },
+      {
+        "OutputKey": "PublicSubnetTwo",
+        "OutputValue": "subnet-0db6d7e54882a8c94"
+      },
+      {
+        "OutputKey": "PrivateSubnetThree",
+        "OutputValue": "subnet-079d2d5a0bdf6a538"
+      },
+      {
+        "OutputKey": "DefaultSecurityGroupId",
+        "OutputValue": "sg-04da6ef1e62d4450e"
+      },
+      {
+        "OutputKey": "PrivateSubnetOne",
+        "OutputValue": "subnet-0da92b1b121e09352"
+      }
+    ]
+  }
+}
