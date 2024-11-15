@@ -1,0 +1,19 @@
+service: laravel-app
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: provided.al2
+
+functions:
+  web:
+    handler: public/index.php
+    timeout: 28
+    memorySize: 1024
+    layers:
+      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
+    events:
+      - httpApi: '*'
+
+plugins:
+  - serverless-bref
