@@ -57,7 +57,3 @@ functions:
 
 plugins:
   - ./vendor/bref/bref
-
-hooks:
-  after:deploy:finalize:
-    - php artisan migrate --force
