@@ -43,16 +43,11 @@ functions:
 plugins:
   - ./vendor/bref/bref
 
-# package:
-#    include:
-#     - vendor/**/*
-#     - bootstrap/cache/**/*
-#    exclude:
-#     - node_modules/**
-#     - tests/**
-#     - vendor/**/.git
-#     - storage/debugbar/**
-#     - .gitignore
-#     - .env
-#     - README.md
-#     - docker-compose.yml
+package:
+
+   exclude:
+    - node_modules/**
+    - tests/**
+    - storage
+    - public/storage
+    - resources/assets/**
