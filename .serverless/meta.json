@@ -36,300 +36,7 @@
               },
               "stage": "dev",
               "versionFunctions": true,
-              "deploymentMethod": "direct",
-              "compiledCloudFormationTemplate": {
-                "AWSTemplateFormatVersion": "2010-09-09",
-                "Description": "The AWS CloudFormation template for this Serverless application",
-                "Resources": {
-                  "WebLogGroup": {
-                    "Type": "AWS::Logs::LogGroup",
-                    "Properties": {
-                      "LogGroupName": "/aws/lambda/laravel-app-dev-web"
-                    }
-                  },
-                  "IamRoleLambdaExecution": {
-                    "Type": "AWS::IAM::Role",
-                    "Properties": {
-                      "AssumeRolePolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [
-                          {
-                            "Effect": "Allow",
-                            "Principal": {
-                              "Service": [
-                                "lambda.amazonaws.com"
-                              ]
-                            },
-                            "Action": [
-                              "sts:AssumeRole"
-                            ]
-                          }
-                        ]
-                      },
-                      "Policies": [
-                        {
-                          "PolicyName": {
-                            "Fn::Join": [
-                              "-",
-                              [
-                                "laravel-app",
-                                "dev",
-                                "lambda"
-                              ]
-                            ]
-                          },
-                          "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                              {
-                                "Effect": "Allow",
-                                "Action": [
-                                  "logs:CreateLogStream",
-                                  "logs:CreateLogGroup",
-                                  "logs:TagResource"
-                                ],
-                                "Resource": [
-                                  {
-                                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/laravel-app-dev*:*"
-                                  }
-                                ]
-                              },
-                              {
-                                "Effect": "Allow",
-                                "Action": [
-                                  "logs:PutLogEvents"
-                                ],
-                                "Resource": [
-                                  {
-                                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/laravel-app-dev*:*:*"
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        }
-                      ],
-                      "Path": "/",
-                      "RoleName": {
-                        "Fn::Join": [
-                          "-",
-                          [
-                            "laravel-app",
-                            "dev",
-                            {
-                              "Ref": "AWS::Region"
-                            },
-                            "lambdaRole"
-                          ]
-                        ]
-                      }
-                    }
-                  },
-                  "WebLambdaFunction": {
-                    "Type": "AWS::Lambda::Function",
-                    "Properties": {
-                      "Code": {
-                        "S3Bucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-                        "S3Key": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z/laravel-app.zip"
-                      },
-                      "Handler": "public/index.php",
-                      "Runtime": "provided.al2",
-                      "FunctionName": "laravel-app-dev-web",
-                      "MemorySize": 1024,
-                      "Timeout": 130,
-                      "Environment": {
-                        "Variables": {
-                          "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
-                          "APP_DEBUG": "true",
-                          "APP_URL": "https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com",
-                          "MAIL_DRIVER": "ses",
-                          "MAIL_MAILER": "ses",
-                          "SESSION_DRIVER": "file",
-                          "SESSION_DOMAIN": "http://localhost:3000,https://songdis.com",
-                          "SESSION_SECURE_COOKIE": "true",
-                          "SESSION_LIFETIME": "120",
-                          "SANCTUM_STATEFUL_DOMAINS": "http://localhost:3000,https://songdis.com",
-                          "DB_CONNECTION": "mysql",
-                          "DB_HOST": "${env.DB_HOST}",
-                          "DB_PORT": "${env.DB_PORT}",
-                          "DB_DATABASE": "${env.DB_DATABASE}",
-                          "DB_USERNAME": "${env.DB_USERNAME}",
-                          "DB_PASSWORD": "<REDACTED>"
-                        }
-                      },
-                      "Role": {
-                        "Fn::GetAtt": [
-                          "IamRoleLambdaExecution",
-                          "Arn"
-                        ]
-                      },
-                      "Layers": [
-                        "arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10"
-                      ]
-                    },
-                    "DependsOn": [
-                      "WebLogGroup"
-                    ]
-                  },
-                  "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac": {
-                    "Type": "AWS::Lambda::Version",
-                    "DeletionPolicy": "Retain",
-                    "Properties": {
-                      "FunctionName": {
-                        "Ref": "WebLambdaFunction"
-                      },
-                      "CodeSha256": "ccds2dXGJmhc70pNcbKGksUJw+5JsltIoJPz+KLrGzw="
-                    }
-                  },
-                  "HttpApi": {
-                    "Type": "AWS::ApiGatewayV2::Api",
-                    "Properties": {
-                      "Name": "dev-laravel-app",
-                      "ProtocolType": "HTTP"
-                    }
-                  },
-                  "HttpApiStage": {
-                    "Type": "AWS::ApiGatewayV2::Stage",
-                    "Properties": {
-                      "ApiId": {
-                        "Ref": "HttpApi"
-                      },
-                      "StageName": "$default",
-                      "AutoDeploy": true,
-                      "DefaultRouteSettings": {
-                        "DetailedMetricsEnabled": false
-                      }
-                    }
-                  },
-                  "WebLambdaPermissionHttpApi": {
-                    "Type": "AWS::Lambda::Permission",
-                    "Properties": {
-                      "FunctionName": {
-                        "Fn::GetAtt": [
-                          "WebLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "Action": "lambda:InvokeFunction",
-                      "Principal": "apigateway.amazonaws.com",
-                      "SourceArn": {
-                        "Fn::Join": [
-                          "",
-                          [
-                            "arn:",
-                            {
-                              "Ref": "AWS::Partition"
-                            },
-                            ":execute-api:",
-                            {
-                              "Ref": "AWS::Region"
-                            },
-                            ":",
-                            {
-                              "Ref": "AWS::AccountId"
-                            },
-                            ":",
-                            {
-                              "Ref": "HttpApi"
-                            },
-                            "/*"
-                          ]
-                        ]
-                      }
-                    }
-                  },
-                  "HttpApiIntegrationWeb": {
-                    "Type": "AWS::ApiGatewayV2::Integration",
-                    "Properties": {
-                      "ApiId": {
-                        "Ref": "HttpApi"
-                      },
-                      "IntegrationType": "AWS_PROXY",
-                      "IntegrationUri": {
-                        "Fn::GetAtt": [
-                          "WebLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "PayloadFormatVersion": "2.0",
-                      "TimeoutInMillis": 30000
-                    }
-                  },
-                  "HttpApiRouteDefault": {
-                    "Type": "AWS::ApiGatewayV2::Route",
-                    "Properties": {
-                      "ApiId": {
-                        "Ref": "HttpApi"
-                      },
-                      "RouteKey": "$default",
-                      "Target": {
-                        "Fn::Join": [
-                          "/",
-                          [
-                            "integrations",
-                            {
-                              "Ref": "HttpApiIntegrationWeb"
-                            }
-                          ]
-                        ]
-                      }
-                    },
-                    "DependsOn": "HttpApiIntegrationWeb"
-                  }
-                },
-                "Outputs": {
-                  "ServerlessDeploymentBucketName": {
-                    "Value": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-                    "Export": {
-                      "Name": "sls-laravel-app-dev-ServerlessDeploymentBucketName"
-                    }
-                  },
-                  "WebLambdaFunctionQualifiedArn": {
-                    "Description": "Current Lambda function version",
-                    "Value": {
-                      "Ref": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
-                    },
-                    "Export": {
-                      "Name": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
-                    }
-                  },
-                  "HttpApiId": {
-                    "Description": "Id of the HTTP API",
-                    "Value": {
-                      "Ref": "HttpApi"
-                    },
-                    "Export": {
-                      "Name": "sls-laravel-app-dev-HttpApiId"
-                    }
-                  },
-                  "HttpApiUrl": {
-                    "Description": "URL of the HTTP API",
-                    "Value": {
-                      "Fn::Join": [
-                        "",
-                        [
-                          "https://",
-                          {
-                            "Ref": "HttpApi"
-                          },
-                          ".execute-api.",
-                          {
-                            "Ref": "AWS::Region"
-                          },
-                          ".",
-                          {
-                            "Ref": "AWS::URLSuffix"
-                          }
-                        ]
-                      ]
-                    },
-                    "Export": {
-                      "Name": "sls-laravel-app-dev-HttpApiUrl"
-                    }
-                  }
-                }
-              },
-              "vpc": {}
+              "deploymentMethod": "direct"
             },
             "functions": {
               "web": {
@@ -341,16 +48,10 @@
                 ],
                 "events": [
                   {
-                    "httpApi": "*",
-                    "resolvedMethod": "ANY"
+                    "httpApi": "*"
                   }
                 ],
-                "name": "laravel-app-dev-web",
-                "package": {},
-                "memory": 1024,
-                "runtime": "provided.al2",
-                "vpc": {},
-                "versionLogicalId": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
+                "name": "laravel-app-dev-web"
               }
             },
             "plugins": [
@@ -364,17 +65,16 @@
                 "public/storage",
                 "resources/assets/**"
               ],
-              "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts",
-              "deploymentBucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-              "artifact": "C:\\laragon\\www\\songdis\\.serverless\\laravel-app.zip",
-              "artifactDirectoryName": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z"
+              "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts"
             }
           },
           "configFileDirPath": "C:\\laragon\\www\\songdis",
           "config": {
             "type": "sls"
           },
-          "options": {},
+          "options": {
+            "function": "web"
+          },
           "stage": "dev",
           "dashboard": null,
           "logger": {
@@ -416,300 +116,7 @@
         },
         "stage": "dev",
         "versionFunctions": true,
-        "deploymentMethod": "direct",
-        "compiledCloudFormationTemplate": {
-          "AWSTemplateFormatVersion": "2010-09-09",
-          "Description": "The AWS CloudFormation template for this Serverless application",
-          "Resources": {
-            "WebLogGroup": {
-              "Type": "AWS::Logs::LogGroup",
-              "Properties": {
-                "LogGroupName": "/aws/lambda/laravel-app-dev-web"
-              }
-            },
-            "IamRoleLambdaExecution": {
-              "Type": "AWS::IAM::Role",
-              "Properties": {
-                "AssumeRolePolicyDocument": {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Principal": {
-                        "Service": [
-                          "lambda.amazonaws.com"
-                        ]
-                      },
-                      "Action": [
-                        "sts:AssumeRole"
-                      ]
-                    }
-                  ]
-                },
-                "Policies": [
-                  {
-                    "PolicyName": {
-                      "Fn::Join": [
-                        "-",
-                        [
-                          "laravel-app",
-                          "dev",
-                          "lambda"
-                        ]
-                      ]
-                    },
-                    "PolicyDocument": {
-                      "Version": "2012-10-17",
-                      "Statement": [
-                        {
-                          "Effect": "Allow",
-                          "Action": [
-                            "logs:CreateLogStream",
-                            "logs:CreateLogGroup",
-                            "logs:TagResource"
-                          ],
-                          "Resource": [
-                            {
-                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/laravel-app-dev*:*"
-                            }
-                          ]
-                        },
-                        {
-                          "Effect": "Allow",
-                          "Action": [
-                            "logs:PutLogEvents"
-                          ],
-                          "Resource": [
-                            {
-                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/laravel-app-dev*:*:*"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                ],
-                "Path": "/",
-                "RoleName": {
-                  "Fn::Join": [
-                    "-",
-                    [
-                      "laravel-app",
-                      "dev",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      "lambdaRole"
-                    ]
-                  ]
-                }
-              }
-            },
-            "WebLambdaFunction": {
-              "Type": "AWS::Lambda::Function",
-              "Properties": {
-                "Code": {
-                  "S3Bucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-                  "S3Key": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z/laravel-app.zip"
-                },
-                "Handler": "public/index.php",
-                "Runtime": "provided.al2",
-                "FunctionName": "laravel-app-dev-web",
-                "MemorySize": 1024,
-                "Timeout": 130,
-                "Environment": {
-                  "Variables": {
-                    "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
-                    "APP_DEBUG": "true",
-                    "APP_URL": "https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com",
-                    "MAIL_DRIVER": "ses",
-                    "MAIL_MAILER": "ses",
-                    "SESSION_DRIVER": "file",
-                    "SESSION_DOMAIN": "http://localhost:3000,https://songdis.com",
-                    "SESSION_SECURE_COOKIE": "true",
-                    "SESSION_LIFETIME": "120",
-                    "SANCTUM_STATEFUL_DOMAINS": "http://localhost:3000,https://songdis.com",
-                    "DB_CONNECTION": "mysql",
-                    "DB_HOST": "${env.DB_HOST}",
-                    "DB_PORT": "${env.DB_PORT}",
-                    "DB_DATABASE": "${env.DB_DATABASE}",
-                    "DB_USERNAME": "${env.DB_USERNAME}",
-                    "DB_PASSWORD": "<REDACTED>"
-                  }
-                },
-                "Role": {
-                  "Fn::GetAtt": [
-                    "IamRoleLambdaExecution",
-                    "Arn"
-                  ]
-                },
-                "Layers": [
-                  "arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10"
-                ]
-              },
-              "DependsOn": [
-                "WebLogGroup"
-              ]
-            },
-            "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac": {
-              "Type": "AWS::Lambda::Version",
-              "DeletionPolicy": "Retain",
-              "Properties": {
-                "FunctionName": {
-                  "Ref": "WebLambdaFunction"
-                },
-                "CodeSha256": "ccds2dXGJmhc70pNcbKGksUJw+5JsltIoJPz+KLrGzw="
-              }
-            },
-            "HttpApi": {
-              "Type": "AWS::ApiGatewayV2::Api",
-              "Properties": {
-                "Name": "dev-laravel-app",
-                "ProtocolType": "HTTP"
-              }
-            },
-            "HttpApiStage": {
-              "Type": "AWS::ApiGatewayV2::Stage",
-              "Properties": {
-                "ApiId": {
-                  "Ref": "HttpApi"
-                },
-                "StageName": "$default",
-                "AutoDeploy": true,
-                "DefaultRouteSettings": {
-                  "DetailedMetricsEnabled": false
-                }
-              }
-            },
-            "WebLambdaPermissionHttpApi": {
-              "Type": "AWS::Lambda::Permission",
-              "Properties": {
-                "FunctionName": {
-                  "Fn::GetAtt": [
-                    "WebLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "Action": "lambda:InvokeFunction",
-                "Principal": "apigateway.amazonaws.com",
-                "SourceArn": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":execute-api:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":",
-                      {
-                        "Ref": "HttpApi"
-                      },
-                      "/*"
-                    ]
-                  ]
-                }
-              }
-            },
-            "HttpApiIntegrationWeb": {
-              "Type": "AWS::ApiGatewayV2::Integration",
-              "Properties": {
-                "ApiId": {
-                  "Ref": "HttpApi"
-                },
-                "IntegrationType": "AWS_PROXY",
-                "IntegrationUri": {
-                  "Fn::GetAtt": [
-                    "WebLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "PayloadFormatVersion": "2.0",
-                "TimeoutInMillis": 30000
-              }
-            },
-            "HttpApiRouteDefault": {
-              "Type": "AWS::ApiGatewayV2::Route",
-              "Properties": {
-                "ApiId": {
-                  "Ref": "HttpApi"
-                },
-                "RouteKey": "$default",
-                "Target": {
-                  "Fn::Join": [
-                    "/",
-                    [
-                      "integrations",
-                      {
-                        "Ref": "HttpApiIntegrationWeb"
-                      }
-                    ]
-                  ]
-                }
-              },
-              "DependsOn": "HttpApiIntegrationWeb"
-            }
-          },
-          "Outputs": {
-            "ServerlessDeploymentBucketName": {
-              "Value": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-              "Export": {
-                "Name": "sls-laravel-app-dev-ServerlessDeploymentBucketName"
-              }
-            },
-            "WebLambdaFunctionQualifiedArn": {
-              "Description": "Current Lambda function version",
-              "Value": {
-                "Ref": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
-              },
-              "Export": {
-                "Name": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
-              }
-            },
-            "HttpApiId": {
-              "Description": "Id of the HTTP API",
-              "Value": {
-                "Ref": "HttpApi"
-              },
-              "Export": {
-                "Name": "sls-laravel-app-dev-HttpApiId"
-              }
-            },
-            "HttpApiUrl": {
-              "Description": "URL of the HTTP API",
-              "Value": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "https://",
-                    {
-                      "Ref": "HttpApi"
-                    },
-                    ".execute-api.",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ".",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
-              "Export": {
-                "Name": "sls-laravel-app-dev-HttpApiUrl"
-              }
-            }
-          }
-        },
-        "vpc": {}
+        "deploymentMethod": "direct"
       },
       "functions": {
         "web": {
@@ -721,16 +128,10 @@
           ],
           "events": [
             {
-              "httpApi": "*",
-              "resolvedMethod": "ANY"
+              "httpApi": "*"
             }
           ],
-          "name": "laravel-app-dev-web",
-          "package": {},
-          "memory": 1024,
-          "runtime": "provided.al2",
-          "vpc": {},
-          "versionLogicalId": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
+          "name": "laravel-app-dev-web"
         }
       },
       "plugins": [
@@ -744,20 +145,19 @@
           "public/storage",
           "resources/assets/**"
         ],
-        "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts",
-        "deploymentBucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-        "artifact": "C:\\laragon\\www\\songdis\\.serverless\\laravel-app.zip",
-        "artifactDirectoryName": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z"
+        "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts"
       }
     },
     "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n\r\n  environment:\r\n    APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=\r\n    APP_DEBUG: true\r\n    APP_URL: https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com\r\n\r\n    # Mail configuration\r\n    MAIL_DRIVER: ses\r\n    MAIL_MAILER: ses\r\n\r\n    # Session and CORS settings\r\n    SESSION_DRIVER: file\r\n    SESSION_DOMAIN: http://localhost:3000,https://songdis.com\r\n    SESSION_SECURE_COOKIE: true\r\n    SESSION_LIFETIME: 120\r\n    SANCTUM_STATEFUL_DOMAINS: http://localhost:3000,https://songdis.com\r\n\r\n    # Database configuration\r\n    DB_CONNECTION: mysql\r\n    DB_HOST: ${env.DB_HOST}\r\n    DB_PORT: ${env.DB_PORT}\r\n    DB_DATABASE: ${env.DB_DATABASE}\r\n    DB_USERNAME: ${env.DB_USERNAME}\r\n    DB_PASSWORD: ${env.DB_PASSWORD}\r\n    # DB_SSL_CERT: /var/task/storage/certs/aiven-ca.pem\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 130\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - ./vendor/bref/bref\r\n\r\npackage:\r\n\r\n   exclude:\r\n    - node_modules/**\r\n    - tests/**\r\n    - storage\r\n    - public/storage\r\n    - resources/assets/**",
     "command": [
-      "deploy"
+      "logs"
     ],
-    "options": {},
+    "options": {
+      "function": "web"
+    },
     "error": null,
     "params": {},
-    "machineId": "215d206d5e0c997a4faae8627ac2a546",
+    "machineId": "b7e0d8a74bcd4b07c0bcda39b11fd9e3",
     "stage": "dev",
     "accessKeyV2": "<REDACTED>",
     "accessKeyV1": "<REDACTED>",
@@ -786,12 +186,12 @@
     "serviceUniqueId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
     "serviceProviderAwsCfStackCreated": "2024-11-15T11:02:50.639Z",
-    "serviceProviderAwsCfStackUpdated": "2024-11-16T11:35:11.227Z",
+    "serviceProviderAwsCfStackUpdated": "2024-11-16T14:13:41.608Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "WebLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:us-east-1:905418309715:function:laravel-app-dev-web:10",
+        "OutputValue": "arn:aws:lambda:us-east-1:905418309715:function:laravel-app-dev-web:11",
         "Description": "Current Lambda function version",
         "ExportName": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
       },
