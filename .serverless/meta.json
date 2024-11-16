@@ -50,8 +50,7 @@
                 "DB_PORT": "${env.DB_PORT}",
                 "DB_DATABASE": "${env.DB_DATABASE}",
                 "DB_USERNAME": "${env.DB_USERNAME}",
-                "DB_PASSWORD": "<REDACTED>",
-                "DB_SSL_CERT": "/var/task/storage/certs/aiven-ca.pem"
+                "DB_PASSWORD": "<REDACTED>"
               },
               "stage": "dev",
               "versionFunctions": true,
@@ -75,13 +74,7 @@
             },
             "plugins": [
               "./vendor/bref/bref"
-            ],
-            "package": {
-              "include": [
-                "storage/certs/aiven-ca.pem"
-              ],
-              "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts"
-            }
+            ]
           },
           "configFileDirPath": "C:\\laragon\\www\\songdis",
           "config": {
@@ -127,8 +120,7 @@
           "DB_PORT": "${env.DB_PORT}",
           "DB_DATABASE": "${env.DB_DATABASE}",
           "DB_USERNAME": "${env.DB_USERNAME}",
-          "DB_PASSWORD": "<REDACTED>",
-          "DB_SSL_CERT": "/var/task/storage/certs/aiven-ca.pem"
+          "DB_PASSWORD": "<REDACTED>"
         },
         "stage": "dev",
         "versionFunctions": true,
@@ -152,15 +144,9 @@
       },
       "plugins": [
         "./vendor/bref/bref"
-      ],
-      "package": {
-        "include": [
-          "storage/certs/aiven-ca.pem"
-        ],
-        "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts"
-      }
+      ]
     },
-    "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n\r\n  environment:\r\n    APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=\r\n    APP_DEBUG: true\r\n    APP_URL: https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com\r\n\r\n    # Mail configuration\r\n    MAIL_DRIVER: ses\r\n    MAIL_MAILER: ses\r\n\r\n    # Session and CORS settings\r\n    SESSION_DRIVER: file\r\n    SESSION_DOMAIN: http://localhost:3000,https://songdis.com\r\n    SESSION_SECURE_COOKIE: true\r\n    SESSION_LIFETIME: 120\r\n    SANCTUM_STATEFUL_DOMAINS: http://localhost:3000,https://songdis.com\r\n\r\n    # Database configuration\r\n    DB_CONNECTION: mysql\r\n    DB_HOST: ${env.DB_HOST}\r\n    DB_PORT: ${env.DB_PORT}\r\n    DB_DATABASE: ${env.DB_DATABASE}\r\n    DB_USERNAME: ${env.DB_USERNAME}\r\n    DB_PASSWORD: ${env.DB_PASSWORD}\r\n    DB_SSL_CERT: /var/task/storage/certs/aiven-ca.pem\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 60\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - ./vendor/bref/bref\r\n\r\npackage:\r\n  include:\r\n    - storage/certs/aiven-ca.pem\r\n",
+    "serviceRawFile": "service: laravel-app\r\n\r\nprovider:\r\n  name: aws\r\n  region: us-east-1\r\n  runtime: provided.al2\r\n\r\n  environment:\r\n    APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=\r\n    APP_DEBUG: true\r\n    APP_URL: https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com\r\n\r\n    # Mail configuration\r\n    MAIL_DRIVER: ses\r\n    MAIL_MAILER: ses\r\n\r\n    # Session and CORS settings\r\n    SESSION_DRIVER: file\r\n    SESSION_DOMAIN: http://localhost:3000,https://songdis.com\r\n    SESSION_SECURE_COOKIE: true\r\n    SESSION_LIFETIME: 120\r\n    SANCTUM_STATEFUL_DOMAINS: http://localhost:3000,https://songdis.com\r\n\r\n    # Database configuration\r\n    DB_CONNECTION: mysql\r\n    DB_HOST: ${env.DB_HOST}\r\n    DB_PORT: ${env.DB_PORT}\r\n    DB_DATABASE: ${env.DB_DATABASE}\r\n    DB_USERNAME: ${env.DB_USERNAME}\r\n    DB_PASSWORD: ${env.DB_PASSWORD}\r\n    # DB_SSL_CERT: /var/task/storage/certs/aiven-ca.pem\r\n\r\nfunctions:\r\n  web:\r\n    handler: public/index.php\r\n    timeout: 60\r\n    memorySize: 1024\r\n    layers:\r\n      - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'\r\n    events:\r\n      - httpApi: '*'\r\n\r\nplugins:\r\n  - ./vendor/bref/bref\r\n\r\n# package:\r\n#   include:\r\n#     - storage/certs/aiven-ca.pem\r\n",
     "command": [
       "logs"
     ],
@@ -198,12 +184,12 @@
     "serviceUniqueId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:905418309715:stack/laravel-app-dev/27a80820-a341-11ef-99fb-125083352da5",
     "serviceProviderAwsCfStackCreated": "2024-11-15T11:02:50.639Z",
-    "serviceProviderAwsCfStackUpdated": "2024-11-16T09:08:19.397Z",
+    "serviceProviderAwsCfStackUpdated": "2024-11-16T09:24:36.955Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "WebLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:us-east-1:905418309715:function:laravel-app-dev-web:6",
+        "OutputValue": "arn:aws:lambda:us-east-1:905418309715:function:laravel-app-dev-web:8",
         "Description": "Current Lambda function version",
         "ExportName": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
       },
