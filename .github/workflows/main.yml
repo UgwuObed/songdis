@@ -22,20 +22,42 @@ jobs:
     - name: Install Dependencies
       run: composer install --no-dev --optimize-autoloader
 
+    - name: Debug Environment Variables
+      run: |
+        echo "DB_CONNECTION: $DB_CONNECTION"
+        echo "DB_HOST: $DB_HOST"
+        echo "DB_PORT: $DB_PORT"
+        echo "DB_DATABASE: $DB_DATABASE"
+        echo "DB_USERNAME: $DB_USERNAME"
+      env:
+        DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
     - name: Set execute permissions for migrate.sh
       run: chmod +x scripts/migrate.sh
 
     - name: Run Database Migrations
       run: ./scripts/migrate.sh
+      env:
+        DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     - name: Deploy to AWS Lambda
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_BUCKET: ${{secrets.AWS_BUCKET }}
-        AWS_USE_PATH_STYLE_ENDPOINT: ${{secrets.AWS_USE_PATH_STYLE_ENDPOINT }}
-        AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION }}
+        AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+        AWS_USE_PATH_STYLE_ENDPOINT: ${{ secrets.AWS_USE_PATH_STYLE_ENDPOINT }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_PORT: ${{ secrets.DB_PORT }}
@@ -45,4 +67,3 @@ jobs:
       run: |
         npm install -g serverless
         serverless deploy
-        ./scripts/migrate.sh
