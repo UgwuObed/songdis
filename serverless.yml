@@ -28,7 +28,7 @@ provider:
     DB_DATABASE: ${env.DB_DATABASE}
     DB_USERNAME: ${env.DB_USERNAME}
     DB_PASSWORD: ${env.DB_PASSWORD}
-    DB_SSL_CERT: /var/task/storage/certs/aiven-ca.pem
+    # DB_SSL_CERT: /var/task/storage/certs/aiven-ca.pem
 
 functions:
   web:
@@ -43,6 +43,6 @@ functions:
 plugins:
   - ./vendor/bref/bref
 
-package:
-  include:
-    - storage/certs/aiven-ca.pem
+# package:
+#   include:
+#     - storage/certs/aiven-ca.pem
