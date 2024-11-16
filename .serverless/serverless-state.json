@@ -122,13 +122,13 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-                "S3Key": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z/laravel-app.zip"
+                "S3Key": "serverless/laravel-app/dev/1731767775044-2024-11-16T14:36:15.044Z/laravel-app.zip"
               },
               "Handler": "public/index.php",
               "Runtime": "provided.al2",
               "FunctionName": "laravel-app-dev-web",
               "MemorySize": 1024,
-              "Timeout": 130,
+              "Timeout": 30,
               "Environment": {
                 "Variables": {
                   "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
@@ -163,14 +163,14 @@
               "WebLogGroup"
             ]
           },
-          "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac": {
+          "WebLambdaVersionPE7p12CeH4IdRYRzcgL6pcgdLjK1vwG6hxeD1XiUJ0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "WebLambdaFunction"
               },
-              "CodeSha256": "ccds2dXGJmhc70pNcbKGksUJw+5JsltIoJPz+KLrGzw="
+              "CodeSha256": "mIG3e6Zh47v8rdA3GVuk2uBJ8NJi78aQ9ELU6kAGPHU="
             }
           },
           "HttpApi": {
@@ -276,7 +276,7 @@
           "WebLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
+              "Ref": "WebLambdaVersionPE7p12CeH4IdRYRzcgL6pcgdLjK1vwG6hxeD1XiUJ0"
             },
             "Export": {
               "Name": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
@@ -327,7 +327,7 @@
     "functions": {
       "web": {
         "handler": "public/index.php",
-        "timeout": 130,
+        "timeout": 30,
         "memorySize": 1024,
         "layers": {
           "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"WebLambdaFunction\"][\"Properties\"][\"Layers\"]"
@@ -343,7 +343,7 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "WebLambdaVersionOAUXWD5zKhVS3Bw3LBtugFmsLBP0JFaa1x2TnrSac"
+        "versionLogicalId": "WebLambdaVersionPE7p12CeH4IdRYRzcgL6pcgdLjK1vwG6hxeD1XiUJ0"
       }
     },
     "configValidationMode": "warn",
@@ -358,19 +358,6 @@
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
-      },
-      "package": {
-        "exclude": [
-          "node_modules/**",
-          "tests/**",
-          "storage",
-          "public/storage",
-          "resources/assets/**"
-        ],
-        "artifactsS3KeyDirname": "serverless/laravel-app/dev/code-artifacts",
-        "deploymentBucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-        "artifact": "C:\\laragon\\www\\songdis\\.serverless\\laravel-app.zip",
-        "artifactDirectoryName": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z"
       }
     },
     "appId": null,
@@ -379,7 +366,7 @@
     "artifact": "C:\\laragon\\www\\songdis\\.serverless\\laravel-app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/laravel-app/dev/1731756445372-2024-11-16T11:27:25.372Z",
+    "artifactDirectoryName": "serverless/laravel-app/dev/1731767775044-2024-11-16T14:36:15.044Z",
     "artifact": "laravel-app.zip"
   }
 }
