@@ -33,7 +33,7 @@ provider:
 functions:
   web:
     handler: public/index.php
-    timeout: 80
+    timeout: 30
     memorySize: 1024
     layers:
       - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
