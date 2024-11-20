@@ -5,6 +5,11 @@ provider:
   region: us-east-1
   runtime: provided.al2
   
+ 
+  logs:
+    restApi: true
+    httpApi: true
+
   environment:
     APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
     APP_DEBUG: true
@@ -35,13 +40,10 @@ functions:
     handler: public/index.php
     timeout: 29
     memorySize: 2048
-    provisionedConcurrency: 2
     layers:
       - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
     events:
-      - httpApi:
-          path: /
-          method: ANY
+      - httpApi: '*'
 
 plugins:
   - ./vendor/bref/bref
