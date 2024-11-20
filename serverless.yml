@@ -35,10 +35,13 @@ functions:
     handler: public/index.php
     timeout: 29
     memorySize: 2048
+    provisionedConcurrency: 2
     layers:
       - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
     events:
-      - httpApi: '*'
+      - httpApi:
+          path: /
+          method: ANY
 
 plugins:
   - ./vendor/bref/bref
