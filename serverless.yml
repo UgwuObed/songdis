@@ -33,7 +33,7 @@ provider:
 functions:
   web:
     handler: public/index.php
-    timeout: 30
+    timeout: 80
     memorySize: 1024
     layers:
       - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
@@ -43,4 +43,17 @@ functions:
 plugins:
   - ./vendor/bref/bref
 
-
+package:
+   include:
+    - vendor/**/*
+    - bootstrap/cache/**/*
+    
+   exclude:
+    - node_modules/**
+    - tests/**
+    - vendor/**/.git
+    - storage/debugbar/**
+    - .gitignore
+    - .env
+    - README.md
+    - docker-compose.yml
