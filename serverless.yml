@@ -4,6 +4,10 @@ provider:
   name: aws
   region: us-east-1
   runtime: provided.al2
+ 
+  logs:
+    restApi: true
+    httpApi: true
 
   environment:
     APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
