@@ -4,15 +4,11 @@ provider:
   name: aws
   region: us-east-1
   runtime: provided.al2
- 
-  logs:
-    restApi: true
-    httpApi: true
-
+  
   environment:
     APP_KEY: base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=
     APP_DEBUG: true
-    APP_URL: https://ctp1wzzdtf.execute-api.us-east-1.amazonaws.com
+    APP_URL: https://lb0dzxu3xi.execute-api.us-east-1.amazonaws.com
 
     # Mail configuration
     MAIL_DRIVER: ses
@@ -37,8 +33,8 @@ provider:
 functions:
   web:
     handler: public/index.php
-    timeout: 80
-    memorySize: 1024
+    timeout: 29
+    memorySize: 2048
     layers:
       - 'arn:aws:lambda:us-east-1:959512994844:layer:vapor-php-83al2:10'
     events:

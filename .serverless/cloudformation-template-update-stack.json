@@ -91,13 +91,13 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-2440d25b-b907",
-          "S3Key": "serverless/laravel-app/dev/1731767775044-2024-11-16T14:36:15.044Z/laravel-app.zip"
+          "S3Key": "serverless/laravel-app/dev/1732095975338-2024-11-20T09:46:15.338Z/laravel-app.zip"
         },
         "Handler": "public/index.php",
         "Runtime": "provided.al2",
         "FunctionName": "laravel-app-dev-web",
         "MemorySize": 1024,
-        "Timeout": 30,
+        "Timeout": 80,
         "Environment": {
           "Variables": {
             "APP_KEY": "base64:WtLRoKJwjjsbor2OnuJwzib06iraN4IDpyoQyYivU9E=",
@@ -115,7 +115,8 @@
             "DB_PORT": "${env.DB_PORT}",
             "DB_DATABASE": "${env.DB_DATABASE}",
             "DB_USERNAME": "${env.DB_USERNAME}",
-            "DB_PASSWORD": "${env.DB_PASSWORD}"
+            "DB_PASSWORD": "${env.DB_PASSWORD}",
+            "IS_LOCAL": "true"
           }
         },
         "Role": {
@@ -132,14 +133,14 @@
         "WebLogGroup"
       ]
     },
-    "WebLambdaVersionPE7p12CeH4IdRYRzcgL6pcgdLjK1vwG6hxeD1XiUJ0": {
+    "WebLambdaVersionI2CUx21coGPp1A20o0bUgF0haC0EO9Wxle6DlGq9Y": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WebLambdaFunction"
         },
-        "CodeSha256": "mIG3e6Zh47v8rdA3GVuk2uBJ8NJi78aQ9ELU6kAGPHU="
+        "CodeSha256": "vCd1Fy4BCMMDq/umQCSYqMjN0sltNa99mQ3XKlJ+/Bo="
       }
     },
     "HttpApi": {
@@ -147,6 +148,12 @@
       "Properties": {
         "Name": "dev-laravel-app",
         "ProtocolType": "HTTP"
+      }
+    },
+    "HttpApiLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/http-api/laravel-app-dev"
       }
     },
     "HttpApiStage": {
@@ -159,8 +166,18 @@
         "AutoDeploy": true,
         "DefaultRouteSettings": {
           "DetailedMetricsEnabled": false
+        },
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "HttpApiLogGroup",
+              "Arn"
+            ]
+          },
+          "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
         }
-      }
+      },
+      "DependsOn": "HttpApiLogGroup"
     },
     "WebLambdaPermissionHttpApi": {
       "Type": "AWS::Lambda::Permission",
@@ -248,7 +265,7 @@
     "WebLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WebLambdaVersionPE7p12CeH4IdRYRzcgL6pcgdLjK1vwG6hxeD1XiUJ0"
+        "Ref": "WebLambdaVersionI2CUx21coGPp1A20o0bUgF0haC0EO9Wxle6DlGq9Y"
       },
       "Export": {
         "Name": "sls-laravel-app-dev-WebLambdaFunctionQualifiedArn"
