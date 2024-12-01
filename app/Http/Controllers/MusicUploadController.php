@@ -92,9 +92,19 @@ class MusicUploadController extends Controller
                     ]);
                 }
             } else {
+
+                if (!$request->hasFile('audio_file')) {
+                    return response()->json(['error' => 'Audio file is required.'], 400);
+                }
+
+                \Log::info('Request data', ['files' => $request->allFiles(), 'data' => $request->all()]);
+
                 // Process single track upload
                 $audioFilePath = $request->file('audio_file')->store('uploads/audio', 'public');
     
+                \Log::info('Uploaded Audio File', ['audio_file' => $request->file('audio_file')]);
+
+
                 $musicUploads[] = MusicUpload::create([
                     'user_id' => $user->id,
                     'track_title' => $validatedData['track_title'],
@@ -118,6 +128,7 @@ class MusicUploadController extends Controller
                     'upload_type' => $validatedData['upload_type'],
                 ]);
             }
+
     
             \Log::info('Music uploaded successfully', ['music_uploads' => $musicUploads]);
     
