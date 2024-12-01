@@ -28,7 +28,7 @@ class MusicUploadController extends Controller
                 'release_date' => 'nullable|date|after_or_equal:today',
                 'pre_order_date' => 'nullable|date|before_or_equal:release_date',
                 'upc_code' => 'nullable|string|max:12',
-                'release_title' => $request->upload_type !== 'single' ? 'nullable|string|max:255' : 'nullable',
+                'release_title' => $request->upload_type !== 'Single' ? 'nullable|string|max:255' : 'nullable',
                 'songwriter_splits' => 'nullable|string|max:500',
                 'credits' => 'nullable|string|max:1000',
                 'genres_moods' => 'nullable|string|max:500',
