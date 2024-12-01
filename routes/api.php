@@ -41,5 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     //upload music route
     Route::post('/upload-music', [MusicUploadController::class, 'store']);
 
+    //get music route
+    Route::get('/music', [MusicUploadController::class, 'index']);
+    Route::get('/albums/{releaseTitle}/tracks', [MusicUploadController::class, 'fetchAlbumWithTracks']);
+    Route::get('/albums-ep', [MusicUploadController::class, 'fetchAllAlbumsWithTracks']);
+
 });
 

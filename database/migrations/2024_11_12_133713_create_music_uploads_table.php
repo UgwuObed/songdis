@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('producers')->nullable();
             $table->boolean('explicit_content');
             $table->string('audio_file_path'); 
-            $table->string('release_title');
+            $table->string('release_title')->nullable();
             $table->string('primary_genre');
             $table->string('secondary_genre')->nullable();
             $table->date('release_date');
