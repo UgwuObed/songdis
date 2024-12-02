@@ -224,7 +224,7 @@ public function fetchAllAlbumsWithTracks(Request $request)
         $albumsWithTracks = $albums->map(function ($album) use ($user) {
             $tracks = MusicUpload::where('user_id', $user->id)
                 ->where('release_title', $album->release_title)
-                ->get(['id', 'track_title', 'audio_file_path', 'featured_artists', 'producers', 'lyrics', 'explicit_content']);
+                ->get(['id', 'track_title', 'audio_file_path', 'featured_artists', 'producers', 'lyrics', 'explicit_content', 'songwriter_splits', 'credits', 'genres_moods', 'pre_order_date', 'upc_code', 'upload_type']);
 
             return [
                 'release_title' => $album->release_title,
@@ -232,6 +232,7 @@ public function fetchAllAlbumsWithTracks(Request $request)
                 'album_art_path' => $album->album_art_path,
                 'primary_artist' => $album->primary_artist,
                 'primary_genre' => $album->primary_genre,
+                'upload_type' => $album->upload_type,
                 'tracks' => $tracks,
             ];
         });
