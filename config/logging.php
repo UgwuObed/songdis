@@ -71,6 +71,8 @@ return [
             'with' => [
                 'stream' => 'php://stderr',
             ],
+            
+        ],
 
         'daily' => [
             'driver' => 'daily',
