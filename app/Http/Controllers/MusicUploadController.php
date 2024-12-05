@@ -14,7 +14,6 @@ class MusicUploadController extends Controller
         try {
             \Log::info('Incoming request data', [
                 'request' => $request->all(),
-                'files' => $request->allFiles(),
             ]);
     
             $validatedData = $request->validate([
@@ -24,7 +23,8 @@ class MusicUploadController extends Controller
                 'primary_genre' => 'required|string|max:255',
                 'explicit_content' => 'required|in:1,0',
                 'platforms' => 'required|array|min:1',
-                'album_art' => 'required|file|mimes:jpeg,jpg,png|max:5120',
+                'audio_file_path' => 'required|array|min:1',
+                'album_art_url' => 'required|url',
                 'release_date' => 'nullable|date|after_or_equal:today',
                 'pre_order_date' => 'nullable|date|before_or_equal:release_date',
                 'upc_code' => 'nullable|string|max:12',
@@ -35,11 +35,11 @@ class MusicUploadController extends Controller
             ]);
     
             if (in_array($validatedData['upload_type'], ['Album/EP', 'ep'])) {
-                // validation for tracks
+                // Validation for tracks in an Album/EP
                 $request->validate([
                     'tracks' => 'required|array|min:1',
                     'tracks.*.track_title' => 'required|string|max:255',
-                    'tracks.*.audio_file' => 'required|file|max:10240',
+                    'tracks.*.audio_file_path' => 'required|array|min:1', 
                     'tracks.*.featured_artists' => 'nullable|string|max:500',
                     'tracks.*.producers' => 'nullable|string|max:500',
                     'tracks.*.lyrics' => 'nullable|string',
@@ -47,27 +47,22 @@ class MusicUploadController extends Controller
             } else {
                 // Validation for single track upload
                 $request->validate([
-                    // 'track_title' => 'required|string|max:255',
-                    // 'audio_file' => 'required|file|max:10240',
+                    'audio_file_path' => 'required|array|min:1', 
                     'lyrics' => 'nullable|string',
                     'featured_artists' => 'nullable|string|max:500',
                     'producers' => 'nullable|string|max:500',
                 ]);
             }
-    
+
+            
             \Log::info('Validation passed for music upload');
-    
-            // Store album art
-            $albumArtPath = $request->file('album_art')->store('uploads/art', 'public');
     
             $user = $request->user();
             $musicUploads = [];
     
             if (in_array($validatedData['upload_type'], ['Album/EP', 'ep'])) {
-                // Process tracks for album/EP
+                // Process tracks for Album/EP
                 foreach ($request->tracks as $track) {
-                    $audioFilePath = $track['audio_file']->store('uploads/audio', 'public');
-    
                     $musicUploads[] = MusicUpload::create([
                         'user_id' => $user->id,
                         'track_title' => $track['track_title'],
@@ -75,12 +70,12 @@ class MusicUploadController extends Controller
                         'featured_artists' => $track['featured_artists'] ?? null,
                         'producers' => $track['producers'] ?? null,
                         'explicit_content' => $validatedData['explicit_content'],
-                        'audio_file_path' => $audioFilePath,
+                        'audio_file_path' => json_encode($validatedData['audio_file_path']),
                         'release_title' => $validatedData['release_title'] ?? null,
                         'primary_genre' => $validatedData['primary_genre'],
                         'secondary_genre' => $request->get('secondary_genre'),
                         'release_date' => $validatedData['release_date'] ?? null,
-                        'album_art_path' => $albumArtPath,
+                        'album_art_url' => $validatedData['album_art_url'], 
                         'platforms' => json_encode($validatedData['platforms']),
                         'lyrics' => $track['lyrics'] ?? null,
                         'songwriter_splits' => $request->get('songwriter_splits'),
@@ -92,19 +87,7 @@ class MusicUploadController extends Controller
                     ]);
                 }
             } else {
-
-                if (!$request->hasFile('audio_file')) {
-                    return response()->json(['error' => 'Audio file is required.'], 400);
-                }
-
-                \Log::info('Request data', ['files' => $request->allFiles(), 'data' => $request->all()]);
-
                 // Process single track upload
-                $audioFilePath = $request->file('audio_file')->store('uploads/audio', 'public');
-    
-                \Log::info('Uploaded Audio File', ['audio_file' => $request->file('audio_file')]);
-
-
                 $musicUploads[] = MusicUpload::create([
                     'user_id' => $user->id,
                     'track_title' => $validatedData['track_title'],
@@ -112,12 +95,12 @@ class MusicUploadController extends Controller
                     'featured_artists' => $request->get('featured_artists'),
                     'producers' => $request->get('producers'),
                     'explicit_content' => $validatedData['explicit_content'],
-                    'audio_file_path' => $audioFilePath,
+                    'audio_file_path' => json_encode($validatedData['audio_file_path']),
                     'release_title' => $validatedData['release_title'] ?? null,
                     'primary_genre' => $validatedData['primary_genre'],
                     'secondary_genre' => $request->get('secondary_genre'),
                     'release_date' => $validatedData['release_date'] ?? null,
-                    'album_art_path' => $albumArtPath,
+                    'album_art_url' => $validatedData['album_art_url'], 
                     'platforms' => json_encode($validatedData['platforms']),
                     'lyrics' => $request->get('lyrics'),
                     'songwriter_splits' => $request->get('songwriter_splits'),
@@ -128,23 +111,19 @@ class MusicUploadController extends Controller
                     'upload_type' => $validatedData['upload_type'],
                 ]);
             }
-
     
-            \Log::info('Music uploaded successfully', ['music_uploads' => $musicUploads]);
-    
+            
             return response()->json([
-                'message' => 'Music uploaded successfully!',
+                'success' => true,
+                'message' => 'Music uploaded successfully',
                 'data' => $musicUploads,
-            ], 201);
-    
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation error occurred', ['errors' => $e->errors()]);
-            return response()->json(['errors' => $e->errors()], 422);
+            ]);
         } catch (\Exception $e) {
-            \Log::error('An unexpected error occurred', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An unexpected error occurred. Please try again.'], 500);
+            \Log::error('Error uploading music', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Error uploading music'], 500);
         }
     }
+    
     
 
     public function index(Request $request)
@@ -210,7 +189,7 @@ public function fetchAllAlbumsWithTracks(Request $request)
 
         $albums = MusicUpload::where('user_id', $user->id)
             ->where('upload_type', 'Album/EP')
-            ->select('release_title', 'release_date', 'album_art_path', 'primary_artist', 'primary_genre')
+            ->select('release_title', 'release_date', 'album_art_url', 'primary_artist', 'primary_genre')
             ->distinct() 
             ->get();
 
@@ -224,15 +203,15 @@ public function fetchAllAlbumsWithTracks(Request $request)
         $albumsWithTracks = $albums->map(function ($album) use ($user) {
             $tracks = MusicUpload::where('user_id', $user->id)
                 ->where('release_title', $album->release_title)
-                ->get(['id', 'track_title', 'audio_file_path', 'featured_artists', 'producers', 'lyrics', 'explicit_content', 'songwriter_splits', 'credits', 'genres_moods', 'pre_order_date', 'upc_code', 'upload_type']);
+                ->get(['id', 'track_title', 'audio_file_path', 'album_art_url', 'featured_artists', 'producers', 'lyrics', 'explicit_content', 'songwriter_splits', 'credits', 'genres_moods', 'pre_order_date', 'upc_code', 'upload_type']);
 
             return [
                 'release_title' => $album->release_title,
                 'release_date' => $album->release_date,
                 'album_art_path' => $album->album_art_path,
+                'album_art_url' => $album->album_art_url,
                 'primary_artist' => $album->primary_artist,
                 'primary_genre' => $album->primary_genre,
-                'upload_type' => $album->upload_type,
                 'tracks' => $tracks,
             ];
         });

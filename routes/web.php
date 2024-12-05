@@ -21,3 +21,10 @@ Route::get('/', function () {
 Route::get('/sanctum/csrf-cookie', function (Request $request) {
     return response()->json(['message' => 'CSRF cookie generated']);
 });
+
+Route::get('/test-upload', function () {
+    $testFile = 'uploads/test.txt';
+    Storage::disk('s3')->put($testFile, 'This is a test file');
+    \Log::info('Test file path', ['path' => Storage::disk('s3')->url($testFile)]);
+    return 'Test file uploaded successfully!';
+});

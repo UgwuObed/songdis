@@ -44,14 +44,38 @@ return [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => env('AWS_REGION'), 
             'bucket' => env('AWS_BUCKET'),
-            // 'url' => env('AWS_URL'), 
-            // 'endpoint' => env('AWS_ENDPOINT'), 
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'visibility' => 'public', 
-            'throw' => false,
+            'use_path_style_endpoint' => true,
+            'visibility' => 'public',
         ],
+
+
+        'cloudinary' => [
+            'driver' => 'cloudinary',
+            'url' => env('CLOUDINARY_URL'),
+        ],
+
+        'tigris' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'endpoint' => env('AWS_ENDPOINT_URL_S3'),
+            'region' => env('AWS_REGION', 'auto'),
+            'bucket' => env('AWS_BUCKET', 'songdis'), 
+            'url' => env('AWS_ENDPOINT_URL_S3'),
+        ],
+
+        'b2' => [
+                'driver'     => 's3',
+                'key'         => env('B2_KEY_ID'),      
+                'secret'      => env('B2_APPLICATION_KEY'), 
+                'bucket'      => env('B2_BUCKET_NAME'),   
+                'endpoint'    => env('B2_ENDPOINT'), 
+                'region'      => env('B2_REGION'), 
+                'url'         => env('B2_URL'), 
+            ],
+
 
     ],
 
