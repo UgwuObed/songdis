@@ -23,7 +23,7 @@ class MusicUploadController extends Controller
                 'primary_genre' => 'required|string|max:255',
                 'explicit_content' => 'required|in:1,0',
                 'platforms' => 'required|array|min:1',
-                'audio_file_path' => 'required|array|min:1',
+                'audio_file_path' => $request->upload_type === 'Single' ? 'required|array|min:1' : 'nullable',
                 'album_art_url' => 'required|url',
                 'release_date' => 'nullable|date|after_or_equal:today',
                 'pre_order_date' => 'nullable|date|before_or_equal:release_date',
@@ -39,7 +39,7 @@ class MusicUploadController extends Controller
                 $request->validate([
                     'tracks' => 'required|array|min:1',
                     'tracks.*.track_title' => 'required|string|max:255',
-                    'tracks.*.audio_file_path' => 'required|array|min:1', 
+                    'tracks.*.audio_file_path' => 'required|url', 
                     'tracks.*.featured_artists' => 'nullable|string|max:500',
                     'tracks.*.producers' => 'nullable|string|max:500',
                     'tracks.*.lyrics' => 'nullable|string',
@@ -70,7 +70,7 @@ class MusicUploadController extends Controller
                         'featured_artists' => $track['featured_artists'] ?? null,
                         'producers' => $track['producers'] ?? null,
                         'explicit_content' => $validatedData['explicit_content'],
-                        'audio_file_path' => json_encode($validatedData['audio_file_path']),
+                        'audio_file_path' => json_encode([$track['audio_file_path']]),
                         'release_title' => $validatedData['release_title'] ?? null,
                         'primary_genre' => $validatedData['primary_genre'],
                         'secondary_genre' => $request->get('secondary_genre'),
@@ -125,7 +125,6 @@ class MusicUploadController extends Controller
     }
     
     
-
     public function index(Request $request)
     {
         try {
