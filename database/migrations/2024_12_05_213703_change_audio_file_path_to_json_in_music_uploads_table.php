@@ -12,21 +12,12 @@ class ChangeAudioFilePathToJsonInMusicUploadsTable extends Migration
      * @return void
      */
     public function up()
-    {
-        Schema::table('music_uploads', function (Blueprint $table) {
-            $table->json('audio_file_path')->change();
-        });
-    }
+{
+    DB::statement('ALTER TABLE music_uploads ALTER COLUMN audio_file_path TYPE json USING audio_file_path::json');
+    
+    Schema::table('music_uploads', function (Blueprint $table) {
+        $table->json('audio_file_path')->nullable(false)->change();
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('music_uploads', function (Blueprint $table) {
-            $table->string('audio_file_path')->change();
-        });
-    }
 }
