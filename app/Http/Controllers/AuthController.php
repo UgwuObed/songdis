@@ -57,7 +57,7 @@ class AuthController extends Controller
         'last_name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'account_type' => 'required|string|in:artist,label-paid,label-free',
+        'account_type' => 'required|string|in:basic,growth,professional',
     ], $messages);
 
     if ($validator->fails()) {
