@@ -185,7 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+    
         /*
          * Application Service Providers...
          */
@@ -211,8 +211,10 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
-        'Cloudinary' => CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::class,
+      
+        'Paystack' =>
+        Unicodeveloper\Paystack\Facades\Paystack::class,
+
     ])->toArray(),
 
 ];

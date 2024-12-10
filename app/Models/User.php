@@ -25,6 +25,10 @@ class User extends Authenticatable
         'account_type',
     ];
 
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
