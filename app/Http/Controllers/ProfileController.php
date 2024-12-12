@@ -102,7 +102,7 @@ class ProfileController extends Controller
 
     return response()->json([
         'status' => 'error',
-        'message' => 'Your subscription plan is inactive or invalid.'
+        'message' => 'Please subscribe to a plan to create profile.'
     ], 400);
 }
 

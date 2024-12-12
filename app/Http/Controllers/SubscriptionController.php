@@ -116,13 +116,11 @@ class SubscriptionController extends Controller
                     'amount_paid' => $paymentDetails['data']['amount'] / 100,
                 ]);
     
-                \Log::info('Subscription created successfully', ['subscription' => $subscription]);
     
                 return redirect(env('FRONTEND_URL') . '/home/status?status=success&message=Payment+successful');
 
             }
     
-            \Log::warning('Payment verification failed', ['paymentDetails' => $paymentDetails]);
             return redirect(env('FRONTEND_URL') . '/home/status?status=error&message=Payment+failed');
     
         } catch (\Exception $e) {
