@@ -28,6 +28,7 @@ class MusicUploadController extends Controller
                 'release_date' => 'nullable|date|after_or_equal:today',
                 'pre_order_date' => 'nullable|date|before_or_equal:release_date',
                 'upc_code' => 'nullable|string|max:12',
+                'isrc_code' => 'nullable|string|max:12',
                 'release_title' => $request->upload_type !== 'Single' ? 'nullable|string|max:255' : 'nullable',
                 'songwriter_splits' => 'nullable|string|max:500',
                 'credits' => 'nullable|string|max:1000',
@@ -83,6 +84,7 @@ class MusicUploadController extends Controller
                         'genres_moods' => $request->get('genres_moods'),
                         'pre_order_date' => $validatedData['pre_order_date'] ?? null,
                         'upc_code' => $validatedData['upc_code'] ?? null,
+                        'isrc_code' => $validatedData['isrc_code'] ?? null,
                         'upload_type' => $validatedData['upload_type'],
                     ]);
                 }
@@ -108,6 +110,7 @@ class MusicUploadController extends Controller
                     'genres_moods' => $request->get('genres_moods'),
                     'pre_order_date' => $validatedData['pre_order_date'] ?? null,
                     'upc_code' => $validatedData['upc_code'] ?? null,
+                    'isrc_code' => $validatedData['isrc_code'] ?? null,
                     'upload_type' => $validatedData['upload_type'],
                 ]);
             }

@@ -10,7 +10,7 @@
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "cloudinary/cloudinary_php": "^2.14",
         "composer/ca-bundle": "^1.5",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
@@ -18,6 +18,7 @@
         "laravel/vapor-core": "^2.37",
         "league/flysystem-aws-s3-v3": "^3.0",
         "php-amqplib/php-amqplib": "3.6",
+        "sendgrid/sendgrid": "^8.1",
         "unicodeveloper/laravel-paystack": "^1.2",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1",
         "yabacon/paystack-php": "^2.2"

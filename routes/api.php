@@ -8,6 +8,7 @@ use App\Http\Controllers\MusicUploadController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmailController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -51,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Subscription routes
     Route::get('/plans', [SubscriptionController::class, 'getPlans']);
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
-    Route::get('/subscription/status', [SubscriptionController::class, 'checkSubscription']);
+    Route::get('/status', [SubscriptionController::class, 'checkSubscription']);
     Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
 
 
@@ -66,3 +67,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Payment callback route
     Route::get('/payment/callback', [SubscriptionController::class, 'handleGatewayCallback'])
         ->name('payment.callback');
+
+        Route::apiResource('email-templates', EmailTemplateController::class);

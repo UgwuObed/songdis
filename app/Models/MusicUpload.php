@@ -14,7 +14,7 @@ class MusicUpload extends Model
         'producers', 'explicit_content', 'audio_file_path', 'release_title',
         'primary_genre', 'secondary_genre', 'release_date', 'album_art_path',
         'platforms', 'lyrics', 'songwriter_splits', 'credits', 'genres_moods',
-        'pre_order_date', 'upc_code', 'upload_type', 'album_art_url',
+        'pre_order_date', 'upc_code', 'isrc_code', 'upload_type', 'album_art_url',
     ];
 
     protected $casts = [

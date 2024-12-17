@@ -2,13 +2,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\EmailTemplate;
 use Illuminate\Http\Request;
+use App\Services\EmailService;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 
 class AuthController extends Controller
+
 {
+
     public function login(Request $request)
     {
         $messages = [
@@ -75,8 +81,15 @@ class AuthController extends Controller
     ]);
 
 
+
     $token = $user->createToken('api-token')->plainTextToken;
 
+ 
+    // Mail::to($user->email)->send(new WelcomeEmail($user));
+
+    // if (Mail::failures()) {
+    //     \Log::error('Failed to send email to: ' . $user->email);
+    // }
 
     return response()->json([
         'message' => 'Registration successful.',
