@@ -9,6 +9,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\MailTestController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -69,3 +70,5 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('payment.callback');
 
         Route::apiResource('email-templates', EmailTemplateController::class);
+
+        Route::post('/test-email', [MailTestController::class, 'testBasicEmail']);

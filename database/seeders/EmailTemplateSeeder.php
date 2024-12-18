@@ -10,7 +10,7 @@ class EmailTemplateSeeder extends Seeder
     {
         EmailTemplate::create([
             'name' => 'welcome_email',
-            'subject' => 'Welcome to SongDis, {{first_name}}! 🎉🎶',
+            'subject' => 'Welcome to SongDis, {{first_name}}z! 🎉🎶',
             'content' => '
 <!DOCTYPE html>
 <html>

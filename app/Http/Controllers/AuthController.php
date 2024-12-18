@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Services\EmailService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Log;
+use App\Services\ZeptoMailService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,6 +16,13 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 
 {
+
+    protected $zeptoMailService;
+
+    public function __construct(ZeptoMailService $zeptoMailService)
+    {
+        $this->zeptoMailService = $zeptoMailService;
+    }
 
     public function login(Request $request)
     {
@@ -84,12 +93,29 @@ class AuthController extends Controller
 
     $token = $user->createToken('api-token')->plainTextToken;
 
- 
-    // Mail::to($user->email)->send(new WelcomeEmail($user));
+    try {
+        $template = EmailTemplate::where('name', 'welcome_email')->first();
 
-    // if (Mail::failures()) {
-    //     \Log::error('Failed to send email to: ' . $user->email);
-    // }
+        if ($template) {
+            $content = $template->content;
+            $content = str_replace(
+                ['{{first_name}}', '{{whatsapp_link}}'],
+                [$user->first_name, 'https://chat.whatsapp.com/GAtEskogpSB3miS9DIv7st'],
+                $content
+            );
+
+            $this->zeptoMailService->sendEmail(
+                $user->email,
+                $user->first_name,
+                $template->subject,
+                $content
+            );
+        } else {
+            Log::warning('Welcome email template not found');
+        }
+    } catch (\Exception $e) {
+        Log::error('Failed to send welcome email', ['error' => $e->getMessage()]);
+    }
 
     return response()->json([
         'message' => 'Registration successful.',
