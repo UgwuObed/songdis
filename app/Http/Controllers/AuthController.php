@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use App\Services\ZeptoMailService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class AuthController extends Controller
@@ -72,7 +74,7 @@ class AuthController extends Controller
         'last_name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'account_type' => 'required|string|in:basic,growth,professional',
+        'account_type' => 'required|string|in:basic,growth,professional,admin',
     ], $messages);
 
     if ($validator->fails()) {
@@ -123,6 +125,32 @@ class AuthController extends Controller
         'token' => $token
     ], 201);
 }
+
+public function fetchAllUsers(Request $request)
+{
+    $user = Auth::user();
+
+    if ($user->account_type !== 'admin') {
+        Log::warning('Unauthorized access attempt to fetch all users', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'timestamp' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'You are not authorized to perform this action.'
+        ], 403);
+    }
+
+    $users = User::paginate(10); 
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Users fetched successfully.',
+        'data' => $users
+    ], 200);
+ }
 
 }
 

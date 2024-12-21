@@ -10,6 +10,7 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MailTestController;
+use App\Http\Controllers\AdminController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -61,7 +62,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create-profile', [ProfileController::class, 'create']);
     Route::get('/profile', [ProfileController::class, 'show']);
 
-
+   
+    // admin route
+    Route::get('/admin/users', [AuthController::class, 'fetchAllUsers']);
+    Route::get('/admin/singles', [AdminController::class, 'fetchAllSingles']);
+    Route::get('/admin/albums', [AdminController::class, 'fetchAllAlbums']);
+    Route::get('/admin/single/{id}', [AdminController::class, 'fetchSingleById']);
+    Route::get('/admin/album/{id}', [AdminController::class, 'fetchAlbumById']);
 
 });
 
