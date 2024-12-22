@@ -191,7 +191,8 @@ class SubscriptionController extends Controller
 
 
     public function redeemPromoCode(Request $request)
-{
+    
+     {
     $request->validate([
         'code' => 'required|string'
     ]);
