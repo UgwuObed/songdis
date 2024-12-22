@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PromoCodeController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -56,6 +57,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
     Route::get('/status', [SubscriptionController::class, 'checkSubscription']);
     Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
+    Route::post('/redeem-promo', [SubscriptionController::class, 'redeemPromoCode']);
+    Route::get('/promo-codes', [PromoCodeController::class, 'index']);
+    Route::post('/promo-codes/generate', [PromoCodeController::class, 'generate']);
+    Route::post('/promo-codes/{id}/toggle', [PromoCodeController::class, 'toggleStatus']);
+    Route::put('/promo-codes/{id}', [PromoCodeController::class, 'update']);
+    Route::get('/promo-codes/{id}/stats', [PromoCodeController::class, 'getStats']);
 
 
     //Profile routes
