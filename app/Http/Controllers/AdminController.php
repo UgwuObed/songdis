@@ -11,10 +11,22 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ZeptoMailService;
+use App\Models\EmailTemplate;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StatusUpdatedEmail;
+use Illuminate\Support\Facades\Log;
 
 
 class AdminController extends Controller
 {
+
+    protected $zeptoMailService;
+
+    public function __construct(ZeptoMailService $zeptoMailService)
+    {
+        $this->zeptoMailService = $zeptoMailService;
+    }
 
     public function fetchAllSingles(Request $request)
     {
@@ -50,6 +62,7 @@ class AdminController extends Controller
                         'upc_code' => $single->upc_code,
                         'isrc_code' => $single->isrc_code,
                         'upload_type' => $single->upload_type,
+                        'status', $single->status,
                         'user_id' => $single->user_id
                     ];
                 });
@@ -81,7 +94,7 @@ class AdminController extends Controller
             }
     
             $albums = MusicUpload::where('upload_type', 'Album/EP')
-                ->select('id', 'release_title', 'release_date', 'album_art_url', 'primary_artist', 'primary_genre', 'user_id')
+                ->select('id', 'release_title', 'release_date', 'album_art_url', 'primary_artist', 'primary_genre', 'status', 'user_id')
                 ->distinct()
                 ->get();
     
@@ -94,7 +107,7 @@ class AdminController extends Controller
     
             $albumsWithTracks = $albums->map(function ($album) {
                 $tracks = MusicUpload::where('release_title', $album->release_title)
-                    ->get(['id', 'track_title', 'primary_artist', 'featured_artists', 'producers', 'audio_file_path', 'primary_genre', 'secondary_genre', 'release_date', 'album_art_url', 'platforms', 'explicit_content', 'genres_moods', 'credits', 'lyrics', 'songwriter_splits', 'genres_moods', 'pre_order_date', 'upc_code', 'isrc_code', 'upload_type', 'user_id']);
+                    ->get(['id', 'track_title', 'primary_artist', 'featured_artists', 'producers', 'audio_file_path', 'primary_genre', 'secondary_genre', 'release_date', 'album_art_url', 'platforms', 'explicit_content', 'genres_moods', 'credits', 'lyrics', 'songwriter_splits', 'genres_moods', 'pre_order_date', 'upc_code', 'isrc_code', 'upload_type', 'status', 'user_id']);
     
                 return [
                     'id' => $album->id, 
@@ -123,7 +136,7 @@ class AdminController extends Controller
  public function fetchSingleById($id, Request $request)
  {
      try {
-         // Check for admin user
+       
          if ($request->user()->account_type !== 'admin') {
              return response()->json([
                  'message' => 'Unauthorized access.',
@@ -175,4 +188,89 @@ class AdminController extends Controller
      }
  }
 
+ public function updateStatus($id, Request $request)
+    {
+        try {
+            if ($request->user()->account_type !== 'admin') {
+                return response()->json([
+                    'message' => 'Unauthorized access.',
+                ], 403);
+            }
+
+            $request->validate([
+                'status' => 'required|in:complete',
+            ]);
+
+            $musicUpload = MusicUpload::find($id);
+            if (!$musicUpload) {
+                return response()->json([
+                    'message' => 'Music upload not found.',
+                ], 404);
+            }
+
+            $user = User::find($musicUpload->user_id);
+            if (!$user) {
+                Log::error('User not found for music upload ID: ' . $id);
+                return response()->json([
+                    'message' => 'Associated user not found.',
+                ], 404);
+            }
+
+            if ($musicUpload->upload_type === 'Album/EP') {
+                MusicUpload::where('release_title', $musicUpload->release_title)
+                    ->update(['status' => 'complete']);
+            } else {
+                $musicUpload->status = 'complete';
+                $musicUpload->save();
+            }
+
+            $template = EmailTemplate::where('name', 'delivery_success')->first();
+            if ($template) {
+       
+                $content = str_replace(
+                    '{{primary_artist}}',
+                    $musicUpload->primary_artist,
+                    $template->content
+                );
+
+         
+                try {
+                    $this->zeptoMailService->sendEmail(
+                        $user->email,
+                        $user->first_name,
+                        $template->subject,
+                        $content
+                    );
+
+                
+                } catch (\Exception $e) {
+                    Log::error('Failed to send delivery success email', [
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            } else {
+                Log::warning('Delivery success email template not found.');
+            }
+
+            return response()->json([
+                'message' => 'Status updated to complete and notification email sent successfully!',
+                'data' => $musicUpload,
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error in updateStatus', [
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
+
+

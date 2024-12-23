@@ -97,8 +97,8 @@ class ZeptoMailService
                         ]
                     ]
                 ],
-                'template_key' => $templateId, // Moved outside 'template' object
-                'merge_data' => [  // Changed from variables to merge_data
+                'template_key' => $templateId, 
+                'merge_data' => [ 
                     'personalization' => [
                         $templateData
                     ]
@@ -147,7 +147,7 @@ class ZeptoMailService
             'htmlbody' => $htmlContent,
         ];
 
-        // Log::info('Sending email with payload:', ['payload' => $payload]);
+        Log::info('Sending email with payload:', ['payload' => $payload]);
 
         $response = $this->client->post('email', [
             'json' => $payload,

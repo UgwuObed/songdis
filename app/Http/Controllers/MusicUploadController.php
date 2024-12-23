@@ -6,9 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\MusicUpload;
+use App\Models\EmailTemplate;
+use App\Services\ZeptoMailService;
+use App\Services\EmailService;
+use App\Mail\UploadEmail;
+use Illuminate\Support\Facades\Mail;
 
 class MusicUploadController extends Controller
 {
+
+    protected $zeptoMailService;
+
+    public function __construct(ZeptoMailService $zeptoMailService)
+    {
+        $this->zeptoMailService = $zeptoMailService;
+    }
+    
     public function store(Request $request)
     {
         try {
@@ -115,7 +128,24 @@ class MusicUploadController extends Controller
                 ]);
             }
     
-            
+            $template = EmailTemplate::where('name', 'music_upload_success')->first();
+            if ($template) {
+                $content = str_replace(
+                    ['{{primary_artist}}', '{{release_date}}'],
+                    [$validatedData['primary_artist'], $validatedData['release_date'] ?? 'N/A'],
+                    $template->content
+                );
+
+                $this->zeptoMailService->sendEmail(
+                    $user->email,
+                    $user->first_name,
+                    $template->subject,
+                    $content
+                );
+            } else {
+                Log::warning('Music upload email template not found.');
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Music uploaded successfully',
@@ -191,7 +221,7 @@ public function fetchAllAlbumsWithTracks(Request $request)
 
         $albums = MusicUpload::where('user_id', $user->id)
             ->where('upload_type', 'Album/EP')
-            ->select('release_title', 'release_date', 'album_art_url', 'primary_artist', 'primary_genre')
+            ->select('release_title', 'release_date', 'album_art_url', 'primary_artist', 'primary_genre', 'status')
             ->distinct() 
             ->get();
 
@@ -205,7 +235,7 @@ public function fetchAllAlbumsWithTracks(Request $request)
         $albumsWithTracks = $albums->map(function ($album) use ($user) {
             $tracks = MusicUpload::where('user_id', $user->id)
                 ->where('release_title', $album->release_title)
-                ->get(['id', 'track_title', 'audio_file_path', 'album_art_url', 'featured_artists', 'producers', 'lyrics', 'explicit_content', 'songwriter_splits', 'credits', 'genres_moods', 'pre_order_date', 'upc_code', 'upload_type']);
+                ->get(['id', 'track_title', 'audio_file_path', 'album_art_url', 'featured_artists', 'producers', 'lyrics', 'explicit_content', 'songwriter_splits', 'credits', 'genres_moods', 'pre_order_date', 'upc_code', 'upload_type', 'status']);
 
             return [
                 'release_title' => $album->release_title,

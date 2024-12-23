@@ -76,6 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/albums', [AdminController::class, 'fetchAllAlbums']);
     Route::get('/admin/single/{id}', [AdminController::class, 'fetchSingleById']);
     Route::get('/admin/album/{id}', [AdminController::class, 'fetchAlbumById']);
+    Route::put('/admin/music/{id}/status', [AdminController::class, 'updateStatus']);
+    
 
 });
 
