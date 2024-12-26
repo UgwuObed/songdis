@@ -143,14 +143,17 @@ public function fetchAllUsers(Request $request)
         ], 403);
     }
 
-    $users = User::paginate(10); 
+    $users = User::paginate(10);
+
+    $totalUsers = User::count();
 
     return response()->json([
         'status' => 'success',
         'message' => 'Users fetched successfully.',
-        'data' => $users
+        'count' => $totalUsers,
+        'data' => $users 
     ], 200);
- }
+}
 
 }
 
