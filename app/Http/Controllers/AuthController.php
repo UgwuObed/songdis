@@ -177,10 +177,8 @@ public function forgotPassword(Request $request)
 
     $token = Str::random(64);
 
-    // Delete any existing reset tokens for this email
     DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-    // Create new password reset token
     DB::table('password_reset_tokens')->insert([
         'email' => $request->email,
         'token' => $token,
@@ -192,7 +190,11 @@ public function forgotPassword(Request $request)
         $template = EmailTemplate::where('name', 'reset_password')->first();
 
         if ($template) {
-            $resetLink = config('app.url') . '/reset-password/' . $token;
+            $resetLink = env('FRONTEND_URL') . '/auth/reset?' . http_build_query([
+                'token' => $token,
+                'email' => $request->email
+            ]);
+
             $content = str_replace(
                 ['{{first_name}}', '{{reset_link}}'],
                 [$user->first_name, $resetLink],
@@ -210,7 +212,7 @@ public function forgotPassword(Request $request)
             return response()->json([
                 'message' => 'Unable to send reset password email. Please contact support.'
             ], 500);
-        }
+        } 
     } catch (\Exception $e) {
         Log::error('Failed to send reset password email', ['error' => $e->getMessage()]);
         return response()->json([
@@ -255,7 +257,6 @@ public function resetPassword(Request $request)
         ], 422);
     }
 
-    // Check if token is expired (24 hours)
     if (Carbon::parse($tokenData->created_at)->addHours(24)->isPast()) {
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
         return response()->json([
@@ -267,7 +268,6 @@ public function resetPassword(Request $request)
     $user->password = Hash::make($request->password);
     $user->save();
 
-    // Delete the token after successful reset
     DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
     return response()->json([

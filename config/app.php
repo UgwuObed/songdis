@@ -215,6 +215,7 @@ return [
         'Paystack' =>
         Unicodeveloper\Paystack\Facades\Paystack::class,
 
+        
     ])->toArray(),
 
 ];
