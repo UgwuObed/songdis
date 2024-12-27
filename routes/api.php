@@ -32,6 +32,8 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 Route::middleware(['api', EnsureFrontendRequestsAreStateful::class])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 });
 
 
@@ -88,3 +90,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('email-templates', EmailTemplateController::class);
 
         Route::post('/test-email', [MailTestController::class, 'testBasicEmail']);
+
+        
