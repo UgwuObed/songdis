@@ -12,6 +12,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PromoCodeController;
+use App\Http\Controllers\AccountDetailController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -80,6 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/album/{id}', [AdminController::class, 'fetchAlbumById']);
     Route::put('/admin/music/{id}/status', [AdminController::class, 'updateStatus']);
     
+
+    // account routes
+    Route::get('/account-details', [AccountDetailController::class, 'show']);
+    Route::post('/account-details', [AccountDetailController::class, 'store']);
+    Route::put('/account-details/{accountDetail}', [AccountDetailController::class, 'update']);
+    Route::delete('/account-details/{accountDetail}', [AccountDetailController::class, 'destroy']);
 
 });
 
