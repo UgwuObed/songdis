@@ -73,14 +73,13 @@ class ZeptoMailService
         }
     }
 
-    // Modified template email method
+
     public function sendTemplateEmail(string $templateId, array $templateData, string $toEmail, string $toName = '')
     {
         try {
-            // First, let's verify we can get template info
+           
             try {
                 $templateResponse = $this->client->get("template/{$templateId}");
-                Log::info('Template info:', ['response' => json_decode($templateResponse->getBody(), true)]);
             } catch (GuzzleException $e) {
                 Log::warning('Could not verify template:', ['error' => $e->getMessage()]);
             }
@@ -105,10 +104,7 @@ class ZeptoMailService
                 ]
             ];
 
-            Log::info('Sending template email with payload:', [
-                'payload' => $payload,
-                'template_id' => $templateId
-            ]);
+
 
             $response = $this->client->post('email/template', [
                 'json' => $payload
@@ -147,7 +143,6 @@ class ZeptoMailService
             'htmlbody' => $htmlContent,
         ];
 
-        Log::info('Sending email with payload:', ['payload' => $payload]);
 
         $response = $this->client->post('email', [
             'json' => $payload,

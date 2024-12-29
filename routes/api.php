@@ -13,7 +13,10 @@ use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PromoCodeController;
 use App\Http\Controllers\AccountDetailController;
+use App\Http\Controllers\BulkEmailController;
+use App\Http\Controllers\EmailTemplateController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+
 
 
 
@@ -88,6 +91,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/account-details/{accountDetail}', [AccountDetailController::class, 'update']);
     Route::delete('/account-details/{accountDetail}', [AccountDetailController::class, 'destroy']);
 
+
+    // email routes
+    Route::post('/send-bulk', [BulkEmailController::class, 'sendBulkWelcomeEmails']);
+    Route::post('/send-welcome-to-all', [BulkEmailController::class, 'sendWelcomeEmailToAllUsers']);
+
 });
 
     // Payment callback route
@@ -97,5 +105,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('email-templates', EmailTemplateController::class);
 
         Route::post('/test-email', [MailTestController::class, 'testBasicEmail']);
-
-        
