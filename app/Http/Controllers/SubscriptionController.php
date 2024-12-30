@@ -206,11 +206,12 @@ class SubscriptionController extends Controller
             ->firstOrFail();
 
         $isValid = $promoCode->isValid();
-        \Log::info('Code validity check:', [
-            'is_valid' => $isValid,
-            'times_used' => $promoCode->times_used,
-            'max_uses' => $promoCode->max_uses
-        ]);
+
+        // \Log::info('Code validity check:', [
+        //     'is_valid' => $isValid,
+        //     'times_used' => $promoCode->times_used,
+        //     'max_uses' => $promoCode->max_uses
+        // ]);
 
         if (!$isValid) {
             return response()->json([
@@ -231,7 +232,7 @@ class SubscriptionController extends Controller
 
         $subscription = Subscription::create([
             'user_id' => $user->id,
-            'plan_id' => Plan::where('name', 'Basic')->first()->id,
+            'plan_id' => Plan::where('name', 'Growth')->first()->id,
             'start_date' => now(),
             'end_date' => now()->addDays($promoCode->duration_days),
             'status' => 'active',
