@@ -189,87 +189,95 @@ class AdminController extends Controller
  }
 
  public function updateStatus($id, Request $request)
-    {
-        try {
-            if ($request->user()->account_type !== 'admin') {
-                return response()->json([
-                    'message' => 'Unauthorized access.',
-                ], 403);
-            }
-
-            $request->validate([
-                'status' => 'required|in:complete',
-            ]);
-
-            $musicUpload = MusicUpload::find($id);
-            if (!$musicUpload) {
-                return response()->json([
-                    'message' => 'Music upload not found.',
-                ], 404);
-            }
-
-            $user = User::find($musicUpload->user_id);
-            if (!$user) {
-                Log::error('User not found for music upload ID: ' . $id);
-                return response()->json([
-                    'message' => 'Associated user not found.',
-                ], 404);
-            }
-
-            if ($musicUpload->upload_type === 'Album/EP') {
-                MusicUpload::where('release_title', $musicUpload->release_title)
-                    ->update(['status' => 'complete']);
-            } else {
-                $musicUpload->status = 'complete';
-                $musicUpload->save();
-            }
-
-            $template = EmailTemplate::where('name', 'delivery_success')->first();
-            if ($template) {
-       
-                $content = str_replace(
-                    '{{primary_artist}}',
-                    $musicUpload->primary_artist,
-                    $template->content
-                );
-
-         
-                try {
-                    $this->zeptoMailService->sendEmail(
-                        $user->email,
-                        $user->first_name,
-                        $template->subject,
-                        $content
-                    );
-
-                
-                } catch (\Exception $e) {
-                    Log::error('Failed to send delivery success email', [
-                        'user_id' => $user->id,
-                        'email' => $user->email,
-                        'error' => $e->getMessage()
-                    ]);
-                }
-            } else {
-                Log::warning('Delivery success email template not found.');
-            }
-
-            return response()->json([
-                'message' => 'Status updated to complete and notification email sent successfully!',
-                'data' => $musicUpload,
-            ], 200);
-
-        } catch (\Exception $e) {
-            Log::error('Error in updateStatus', [
-                'error' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'message' => 'An error occurred: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
+ {
+     try {
+         if ($request->user()->account_type !== 'admin') {
+             return response()->json([
+                 'message' => 'Unauthorized access.',
+             ], 403);
+         }
+ 
+         $request->validate([
+             'status' => 'required|in:Delivered,Live,NeedDoc',
+         ]);
+ 
+         $musicUpload = MusicUpload::find($id);
+         if (!$musicUpload) {
+             return response()->json([
+                 'message' => 'Music upload not found.',
+             ], 404);
+         }
+ 
+         $user = User::find($musicUpload->user_id);
+         if (!$user) {
+             Log::error('User not found for music upload ID: ' . $id);
+             return response()->json([
+                 'message' => 'Associated user not found.',
+             ], 404);
+         }
+ 
+         // Get the appropriate email template based on status
+         $templateName = match($request->status) {
+             'Delivered' => 'delivery_success',
+             'Live' => 'live_success',
+             'NeedDoc' => 'need_documentation',
+             default => null
+         };
+ 
+         // Update status for all related uploads if it's an Album/EP
+         if ($musicUpload->upload_type === 'Album/EP') {
+             MusicUpload::where('release_title', $musicUpload->release_title)
+                 ->update(['status' => $request->status]);
+         } else {
+             $musicUpload->status = $request->status;
+             $musicUpload->save();
+         }
+ 
+         // Send email if template exists
+         if ($templateName) {
+             $template = EmailTemplate::where('name', $templateName)->first();
+             if ($template) {
+                 $content = str_replace(
+                     '{{primary_artist}}',
+                     $musicUpload->primary_artist,
+                     $template->content
+                 );
+ 
+                 try {
+                     $this->zeptoMailService->sendEmail(
+                         $user->email,
+                         $user->first_name,
+                         $template->subject,
+                         $content
+                     );
+                 } catch (\Exception $e) {
+                     Log::error("Failed to send {$templateName} email", [
+                         'user_id' => $user->id,
+                         'email' => $user->email,
+                         'error' => $e->getMessage()
+                     ]);
+                 }
+             } else {
+                 Log::warning("{$templateName} email template not found.");
+             }
+         }
+ 
+         return response()->json([
+             'message' => "Status updated to {$request->status} and notification email sent successfully!",
+             'data' => $musicUpload,
+         ], 200);
+ 
+     } catch (\Exception $e) {
+         Log::error('Error in updateStatus', [
+             'error' => $e->getMessage(),
+             'stack_trace' => $e->getTraceAsString()
+         ]);
+ 
+         return response()->json([
+             'message' => 'An error occurred: ' . $e->getMessage(),
+         ], 500);
+     }
+ }
 
 }
 

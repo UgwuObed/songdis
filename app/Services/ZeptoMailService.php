@@ -148,11 +148,11 @@ class ZeptoMailService
             'json' => $payload,
         ]);
 
-        // Log::info('Email sent successfully', [
-        //     'to' => $toEmail,
-        //     'status' => $response->getStatusCode(),
-        //     'response' => json_decode($response->getBody(), true),
-        // ]);
+        Log::info('Email sent successfully', [
+            'to' => $toEmail,
+            'status' => $response->getStatusCode(),
+            'response' => json_decode($response->getBody(), true),
+        ]);
 
         return json_decode($response->getBody(), true);
 
