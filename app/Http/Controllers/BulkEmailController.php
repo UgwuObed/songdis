@@ -37,13 +37,14 @@ class BulkEmailController extends Controller
 
             $request->validate([
                 'user_ids' => 'required|array',
-                'user_ids.*' => 'exists:users,id'
+                'user_ids.*' => 'exists:users,id',
+                'template_id' => 'required|exists:email_templates,id'  
             ]);
 
-            $template = EmailTemplate::where('name', 'live_email')->first();
+            $template = EmailTemplate::find($request->template_id);
             
             if (!$template) {
-                Log::warning('Welcome email template not found.');
+                Log::warning('Email template not found.');
                 return response()->json([
                     'message' => 'Email template not found.',
                 ], 404);
@@ -72,9 +73,10 @@ class BulkEmailController extends Controller
                     $successCount++;
 
                 } catch (\Exception $e) {
-                    Log::error('Failed to send welcome email', [
+                    Log::error('Failed to send email', [
                         'user_id' => $user->id,
                         'email' => $user->email,
+                        'template_id' => $template->id,
                         'error' => $e->getMessage()
                     ]);
 
@@ -117,6 +119,10 @@ class BulkEmailController extends Controller
                 ], 403);
             }
 
+            $request->validate([
+                'template_id' => 'required|exists:email_templates,id'  
+            ]);
+
             $users = User::query()
                 ->when($request->has('created_after'), function($query) use ($request) {
                     return $query->where('created_at', '>=', $request->created_after);
@@ -128,7 +134,7 @@ class BulkEmailController extends Controller
 
             $userIds = $users->pluck('id')->toArray();
 
-      
+            
             $request->merge(['user_ids' => $userIds]);
             return $this->sendBulkWelcomeEmails($request);
 
@@ -136,6 +142,27 @@ class BulkEmailController extends Controller
             Log::error('Error in sendWelcomeEmailToAllUsers', [
                 'error' => $e->getMessage(),
                 'stack_trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Added new method to list available email templates
+    public function listEmailTemplates()
+    {
+        try {
+            $templates = EmailTemplate::select('id', 'name', 'subject')->get();
+            
+            return response()->json([
+                'templates' => $templates
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error('Error in listEmailTemplates', [
+                'error' => $e->getMessage()
             ]);
 
             return response()->json([

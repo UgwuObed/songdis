@@ -95,6 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // email routes
     Route::post('/send-bulk', [BulkEmailController::class, 'sendBulkWelcomeEmails']);
     Route::post('/send-welcome-to-all', [BulkEmailController::class, 'sendWelcomeEmailToAllUsers']);
+    Route::get('/email', [BulkEmailController::class, 'listEmailTemplates']);
 
 });
 
