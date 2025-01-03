@@ -150,7 +150,7 @@ class BulkEmailController extends Controller
         }
     }
 
-    // Added new method to list available email templates
+
     public function listEmailTemplates()
     {
         try {
