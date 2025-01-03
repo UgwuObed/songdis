@@ -216,15 +216,13 @@ class AdminController extends Controller
              ], 404);
          }
  
-         // Get the appropriate email template based on status
          $templateName = match($request->status) {
              'Delivered' => 'delivery_success',
              'Live' => 'live_success',
-             'NeedDoc' => 'need_documentation',
+             'NeedDoc' => 'upload_attention',
              default => null
          };
  
-         // Update status for all related uploads if it's an Album/EP
          if ($musicUpload->upload_type === 'Album/EP') {
              MusicUpload::where('release_title', $musicUpload->release_title)
                  ->update(['status' => $request->status]);
@@ -233,7 +231,7 @@ class AdminController extends Controller
              $musicUpload->save();
          }
  
-         // Send email if template exists
+
          if ($templateName) {
              $template = EmailTemplate::where('name', $templateName)->first();
              if ($template) {
